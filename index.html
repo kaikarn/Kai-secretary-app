@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>เลขาส่วนตัว</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .notes{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))!important;gap:20px!important}
+    .note{--note-bg:#8490ff;min-height:330px!important;padding:20px!important;border:0!important;border-radius:26px!important;background:var(--note-bg)!important;color:#17151f!important;box-shadow:0 14px 26px rgba(31,30,60,.14)!important;transform:none!important;display:flex!important;flex-direction:column!important;gap:12px!important;overflow:hidden}
+    .note.c-blue{--note-bg:#6fa7ff}.note.c-violet{--note-bg:#8791ff}.note.c-yellow{--note-bg:#f6ff35}.note.c-pink{--note-bg:#f6a1df}.note.c-orange{--note-bg:#ff914f}.note.c-lime{--note-bg:#d8f45a}
+    .note:hover,.note:focus-within{transform:translateY(-4px)!important;box-shadow:0 20px 34px rgba(31,30,60,.2)!important}
+    .note:before{display:none!important}
+    .note-head{order:2!important;margin-top:0!important;align-items:flex-start!important;gap:8px!important}
+    .note h4{font-size:15px!important;line-height:1.2!important;color:#17151f!important}
+    .note .content{order:1!important;font-size:12px!important;line-height:1.45!important;color:#1e1c28!important;display:flex!important;flex-direction:column!important;gap:10px!important}
+    .note .content img{order:-1!important;width:100%!important;height:150px!important;object-fit:cover!important;background:#fff!important;padding:10px!important;margin:0 0 4px!important;border-radius:28px!important;clip-path:polygon(10% 0,90% 0,100% 12%,100% 88%,88% 100%,12% 100%,0 88%,0 12%)!important;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+    .note .content:not(:has(img)):before{content:"";display:block;height:150px;background:rgba(255,255,255,.62);border-radius:28px;clip-path:polygon(10% 0,90% 0,100% 12%,100% 88%,88% 100%,12% 100%,0 88%,0 12%);box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+    .note .actions{top:auto!important;right:16px!important;bottom:14px!important;opacity:1!important}
+    .note .mini{width:34px!important;height:34px!important;min-height:34px!important;background:rgba(255,255,255,.5)!important;border:1px solid rgba(0,0,0,.32)!important;color:#17151f!important}
+    .note .pin{background:rgba(255,255,255,.6)!important;color:#17151f!important;border:1px solid rgba(0,0,0,.2)!important}
+    .note.pinned{outline:3px solid rgba(255,255,255,.75)!important}
+  </style>
+  <style>
+    :root{--bg:#f8f7f2;--card:#fffefa;--ink:#18171f;--muted:#6f6d78;--line:#d9d4ee;--main:#4d5cf6;--red:#ef5b78;--blue:#4d5cf6;--amber:#f0a33a;--green:#22a575;--paper:#fff7c2}
+    body,button,input,select,textarea,.editor{font-family:"Kanit",system-ui,-apple-system,"Segoe UI",sans-serif!important}
+    body{background:#f8f7f2!important;color:var(--ink);letter-spacing:0}
+    body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(circle at 8% 8%,rgba(77,92,246,.12),transparent 24%),radial-gradient(circle at 92% 4%,rgba(77,92,246,.08),transparent 18%),linear-gradient(135deg,rgba(255,255,255,.88),rgba(248,247,242,.92))}
+    .side,.login-card,.panel,.card,.email-detail,.email-row,input,select,textarea,.editor{background:var(--card)!important;border-color:var(--line)!important}
+    .side{border-right:1px solid var(--line);box-shadow:8px 0 28px rgba(77,92,246,.05)}
+    .brand .mark,.login-card .mark{background:var(--main)!important;border-radius:28px 28px 10px 28px;box-shadow:0 14px 28px rgba(77,92,246,.22)}
+    h1,h2,h3{color:var(--main);font-weight:700;letter-spacing:0}
+    h1:after,h2:after,h3:after{content:" ✦";font-weight:700;color:var(--main)}
+    h4{font-weight:700;color:#191824}
+    .muted{color:var(--muted)}
+    .nav{border-radius:999px;color:#5f5d6b;font-weight:600}
+    .nav:hover{background:#eeeeff;color:var(--main)}
+    .nav.active{background:var(--main)!important;color:#fff!important;box-shadow:0 10px 22px rgba(77,92,246,.22)}
+    .btn,.mini,.icon{border-radius:999px;font-weight:700}
+    .primary{background:var(--main)!important;color:#fff;box-shadow:0 12px 22px rgba(77,92,246,.22)}
+    .soft{background:#eeeeff!important;color:var(--main)!important}
+    .ghost{background:#f0eef8!important;color:#232132!important}
+    .panel,.card{border-radius:22px!important;box-shadow:0 16px 34px rgba(42,38,95,.08)!important}
+    .stat{position:relative;overflow:hidden}
+    .stat:after{content:"✦";position:absolute;right:16px;top:10px;color:var(--main);font-size:22px;opacity:.42}
+    .stat strong{color:var(--main);font-weight:800}
+    input,select,textarea,.editor{border-radius:18px!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.45)}
+    input:focus,select:focus,textarea:focus,.editor:focus{outline:2px solid rgba(77,92,246,.24);border-color:var(--main)!important}
+    .task{border-left-width:0!important;border-top:4px solid var(--main);border-radius:22px!important}
+    .task.priority-urgent{border-top-color:var(--red)!important}.task.priority-focus{border-top-color:var(--blue)!important}.task.priority-important{border-top-color:var(--amber)!important}.task.priority-general{border-top-color:var(--green)!important}
+    .urgent{background:var(--red)!important}.focus{background:var(--blue)!important}.important{background:var(--amber)!important}.general{background:var(--green)!important}
+    .longterm{background:#7c5cff!important}.task.priority-longterm{border-top-color:#7c5cff!important}
+    .status-open{color:var(--main)!important;background:#eeeeff!important}
+    .month{gap:8px}.day{border-radius:18px!important;background:#fffefa!important}.day.selected{border-color:var(--main)!important;box-shadow:0 0 0 3px rgba(77,92,246,.18)!important}.dow{color:var(--main)}
+    .email-row{border-radius:18px!important}.email-row.active{border-color:var(--main)!important;box-shadow:0 0 0 3px rgba(77,92,246,.16)!important}.email-body,.summary-box,.todo-item{background:#f7f6ff!important;border-color:#dfdcff!important;border-radius:18px!important}
+    .note{border-radius:4px 22px 8px 22px!important;border-color:#ebe0a0!important}
+    .note:nth-child(3n+1){background:linear-gradient(180deg,#fff4a8,#fffbe5)!important}.note:nth-child(3n+2){background:linear-gradient(180deg,#e0ddff,#fbfaff)!important;border-color:#c9c5ff!important}.note:nth-child(3n+3){background:linear-gradient(180deg,#ffddec,#fff7fb)!important;border-color:#f1bdd3!important}
+    .note:before{background:rgba(77,92,246,.18)!important}
+    .note .mini{color:var(--main);border-color:rgba(77,92,246,.2)!important}
+    .toast{background:#191824!important;border:1px solid rgba(255,255,255,.18);border-radius:18px!important}
+    @media(max-width:860px){main{padding:16px}.top{align-items:flex-start}.stats{grid-template-columns:1fr!important}}
+  </style>
+  <style>
+    :root{--bg:#f7f8fa;--card:#fff;--ink:#172033;--muted:#667085;--line:#d9e1ec;--main:#315f8f;--red:#b4534b;--blue:#315f8f;--amber:#b7791f;--green:#16805f;--paper:#fffdf4}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select,textarea{font:inherit}
+    .hidden{display:none!important}.login{min-height:100vh;display:grid;place-items:center;padding:22px}.login-card,.panel,.card{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 22px rgba(15,23,42,.06)}
+    .login-card{width:min(430px,100%);padding:30px;text-align:center}.mark{width:58px;height:58px;border-radius:14px;background:var(--main);color:#fff;display:grid;place-items:center;margin:0 auto 14px;font-weight:800}
+    h1,h2,h3,h4{margin:0}.muted{color:var(--muted);line-height:1.6}.btn,.mini,.nav{border:0;border-radius:10px;cursor:pointer}.btn{min-height:44px;padding:12px 16px;font-weight:800}.primary{background:var(--main);color:#fff}.soft{background:#eef4fa;color:var(--main)}.ghost{background:#f1f4f8;color:var(--ink)}
+    .shell{min-height:100vh;display:grid;grid-template-columns:260px 1fr}.side{background:#fff;border-right:1px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:18px}.brand{display:flex;align-items:center;gap:10px}.brand .mark{width:40px;height:40px;margin:0;border-radius:10px}
+    nav{display:grid;gap:8px;flex:1}.nav{text-align:left;padding:12px 14px;background:transparent;color:var(--muted);font-weight:800}.nav.active{background:#eef4fa;color:var(--main)}
+    main{padding:22px;min-width:0}.top{display:flex;align-items:center;gap:12px;margin-bottom:18px}.top .spacer{flex:1}.icon{width:42px;height:42px;border:1px solid var(--line);background:#fff;border-radius:10px;cursor:pointer}.menu{display:none}
+    .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}.stat{padding:16px}.stat span{color:var(--muted)}.stat strong{display:block;font-size:30px;margin-top:4px}.panel{padding:16px;margin-bottom:14px}.head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+    .task-form{display:grid;grid-template-columns:1.2fr .75fr 1fr .9fr;gap:10px}.task-form textarea{grid-column:1/-3;min-height:78px;resize:vertical}.note-form{display:grid;gap:10px}.field{display:grid;gap:5px;color:var(--muted);font-size:13px;font-weight:700}
+    input,select,textarea,.editor{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 12px;background:#fff;color:var(--ink)}.toolbar{display:grid;grid-template-columns:1fr 180px 180px;gap:10px;margin-bottom:12px}
+    .list{display:grid;gap:10px}.task{padding:14px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px}.task p{margin:6px 0 0;color:var(--muted);line-height:1.5}.actions{display:flex;gap:7px;flex-wrap:wrap}.mini{min-height:36px;padding:0 10px;border:1px solid var(--line);background:#fff}
+    .badge{display:inline-block;padding:4px 8px;border-radius:999px;color:#fff;font-size:12px;font-weight:800;margin-right:6px}.urgent{background:var(--red)}.focus{background:var(--blue)}.important{background:var(--amber)}.general{background:var(--green)}.done{opacity:.55}
+    .month{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.dow{text-align:center;color:var(--muted);font-weight:800;padding:8px}.day{min-height:100px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px;text-align:left;cursor:pointer}.day.selected{border-color:var(--main);box-shadow:0 0 0 2px rgba(49,95,143,.12)}.blank{background:transparent;border:0;cursor:default}.event{display:block;margin-top:5px;padding:3px 5px;border-radius:6px;color:#fff;font-size:11px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .notes{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}.note{padding:15px;background:var(--paper);border-color:#eadfae}.note.pinned{border-color:#d6b453}.note-head{display:flex;justify-content:space-between;gap:8px}.pin{background:#fff3b0;color:#745600;border-radius:999px;padding:3px 8px;font-size:12px;font-weight:800}.content{line-height:1.6;overflow-wrap:anywhere}.content img,.editor img{max-width:100%;border-radius:8px;display:block;margin:8px 0}.tools{display:flex;gap:8px;flex-wrap:wrap}.editor{min-height:160px;background:var(--paper);outline:none}.editor:empty:before{content:attr(data-placeholder);color:#9a9177}.pick input{display:none}.toast{position:fixed;right:16px;bottom:16px;background:#111827;color:#fff;padding:13px 15px;border-radius:10px;max-width:calc(100% - 32px)}
+    @media(max-width:860px){.shell{grid-template-columns:1fr}.side{position:fixed;inset:0 auto 0 0;width:min(290px,86vw);transform:translateX(-105%);transition:.2s;z-index:3}.side.open{transform:translateX(0)}.menu{display:block}.stats,.task-form,.toolbar{grid-template-columns:1fr}.task-form textarea{grid-column:auto}.task{grid-template-columns:1fr}.month{gap:4px}.day{min-height:76px;padding:6px}.event{font-size:10px}}
+    body{background:radial-gradient(circle at top left,#e7eef2 0,transparent 28%),#f3f5f7}.side{background:#fbfcfd}.login{background:radial-gradient(circle at top left,#e7eef2 0,transparent 30%),#f3f5f7}.login-card,.panel,.card{border-radius:14px;box-shadow:0 12px 32px rgba(15,23,42,.07)}.stats{grid-template-columns:repeat(5,minmax(0,1fr))}.stat span{font-size:13px;font-weight:800}.task{border-left:5px solid transparent}.task.priority-urgent{border-left-color:#b4534b}.task.priority-focus{border-left-color:#315f8f}.task.priority-important{border-left-color:#b7791f}.task.priority-general{border-left-color:#16805f}.badge,.status{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:800;margin-right:6px}.status{color:#344054;background:#f2f4f7}.status-open{color:#315f8f;background:#eef4fa}.status-done{color:#12633f;background:#e9f8ef}.status-closed{color:#475467;background:#f2f4f7}.closed,.done{opacity:.72}.note{position:relative;padding:18px;background:linear-gradient(180deg,#fff8c7,#fffdf0);box-shadow:0 12px 22px rgba(126,97,20,.11)}.note:before{content:"";position:absolute;top:8px;left:50%;width:42px;height:8px;background:rgba(102,77,3,.14);border-radius:99px;transform:translateX(-50%)}.note-head{margin-top:8px}.content img,.editor img{width:180px;max-width:100%;cursor:pointer}.content img.img-small,.editor img.img-small{width:96px}.content img.img-medium,.editor img.img-medium{width:180px}.content img.img-large,.editor img.img-large{width:100%}.img-controls{display:flex;gap:8px;flex-wrap:wrap;padding:8px;border:1px dashed #d6b453;border-radius:10px;background:#fffdf0}.img-controls.hidden{display:none!important}.email-compose{display:grid;grid-template-columns:220px 1fr 1fr auto;gap:10px}.email-compose textarea{grid-column:1/-2}.email-window{display:grid;grid-template-columns:320px minmax(0,1fr);gap:12px;min-height:520px}.email-list{display:grid;gap:8px;align-content:start;max-height:640px;overflow:auto}.email-row{width:100%;text-align:left;padding:12px;border:1px solid #e4e7ec;background:#fff;border-radius:12px;cursor:pointer}.email-row.active{border-color:#315f8f;box-shadow:0 0 0 2px rgba(49,95,143,.12)}.email-row h4{font-size:14px;margin-bottom:4px}.email-row p{margin:0;color:#667085;font-size:12px;line-height:1.45}.email-detail{padding:16px;border:1px solid #e4e7ec;border-radius:14px;background:#fff;min-height:460px}.email-meta{display:flex;flex-wrap:wrap;gap:8px;color:#667085;font-size:13px;margin:8px 0 14px}.email-body{white-space:pre-wrap;max-height:180px;overflow:auto;background:#f8fafc;border:1px solid #e4e7ec;border-radius:12px;padding:12px;margin-top:10px;color:#344054}.email-body mark{background:#fff3b0;padding:0 3px;border-radius:4px}.summary-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0}.summary-box{padding:12px;background:#f8fafc;border:1px solid #e4e7ec;border-radius:12px}.summary-box span{display:block;color:#667085;font-size:12px;font-weight:800}.summary-box strong{display:block;margin-top:4px}.todo-list{display:grid;gap:8px;margin-top:10px}.todo-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:9px 10px;background:#f8fafc;border:1px solid #e4e7ec;border-radius:10px}@media(max-width:860px){.stats{grid-template-columns:1fr}.toolbar,.email-compose,.email-window,.summary-grid{grid-template-columns:1fr}.todo-item{grid-template-columns:1fr}}
+  </style>
+  <style>
+    .note{min-height:170px;padding:24px 18px 18px;transform:rotate(-.35deg);transition:transform .16s ease,box-shadow .16s ease}
+    .note:nth-child(3n+1){background:linear-gradient(180deg,#fff7c2,#fffdf0)}
+    .note:nth-child(3n+2){background:linear-gradient(180deg,#dff8ef,#f7fffb);border-color:#b9e6d5;transform:rotate(.35deg)}
+    .note:nth-child(3n+3){background:linear-gradient(180deg,#ffe5ef,#fff8fb);border-color:#f2bfd1;transform:rotate(-.2deg)}
+    .note:hover,.note:focus-within{transform:translateY(-2px) rotate(0);box-shadow:0 16px 30px rgba(126,97,20,.16)}
+    .note .actions{position:absolute;top:10px;right:10px;gap:6px;opacity:.16;transition:opacity .16s ease}
+    .note:hover .actions,.note:focus-within .actions{opacity:1}
+    .note .mini{width:32px;height:32px;min-height:32px;padding:0;display:grid;place-items:center;border-radius:999px;background:rgba(255,255,255,.82);font-size:17px;font-weight:900;line-height:1}
+    .note .mini:hover{background:#fff;box-shadow:0 6px 14px rgba(15,23,42,.12)}
+    .note.pinned{box-shadow:0 16px 30px rgba(214,180,83,.2)}
+    .pin{font-size:15px;padding:2px 7px}
+  </style>
+  <style>
+    :root{--bg:#f8f7f2;--card:#fffefa;--ink:#18171f;--muted:#6f6d78;--line:#d9d4ee;--main:#4d5cf6;--red:#ef5b78;--blue:#4d5cf6;--amber:#f0a33a;--green:#22a575;--paper:#fff7c2}
+    body,button,input,select,textarea,.editor{font-family:"Kanit",system-ui,-apple-system,"Segoe UI",sans-serif!important}
+    body{background:#f8f7f2!important;color:var(--ink);letter-spacing:0}
+    body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(circle at 8% 8%,rgba(77,92,246,.12),transparent 24%),radial-gradient(circle at 92% 4%,rgba(77,92,246,.08),transparent 18%),linear-gradient(135deg,rgba(255,255,255,.88),rgba(248,247,242,.92))}
+    .side,.login-card,.panel,.card,.email-detail,.email-row,input,select,textarea,.editor{background:var(--card)!important;border-color:var(--line)!important}
+    .side{border-right:1px solid var(--line);box-shadow:8px 0 28px rgba(77,92,246,.05)}
+    .brand .mark,.login-card .mark{background:var(--main)!important;border-radius:28px 28px 10px 28px;box-shadow:0 14px 28px rgba(77,92,246,.22)}
+    h1,h2,h3{color:var(--main);font-weight:700;letter-spacing:0}
+    h1:after,h2:after,h3:after{content:" *";font-weight:800;color:var(--main)}
+    h4{font-weight:700;color:#191824}
+    .muted{color:var(--muted)}
+    .nav{border-radius:999px;color:#5f5d6b;font-weight:600}
+    .nav:hover{background:#eeeeff;color:var(--main)}
+    .nav.active{background:var(--main)!important;color:#fff!important;box-shadow:0 10px 22px rgba(77,92,246,.22)}
+    .btn,.mini,.icon{border-radius:999px;font-weight:700}
+    .primary{background:var(--main)!important;color:#fff;box-shadow:0 12px 22px rgba(77,92,246,.22)}
+    .soft{background:#eeeeff!important;color:var(--main)!important}
+    .ghost{background:#f0eef8!important;color:#232132!important}
+    .panel,.card{border-radius:22px!important;box-shadow:0 16px 34px rgba(42,38,95,.08)!important}
+    .stat{position:relative;overflow:hidden}
+    .stat:after{content:"*";position:absolute;right:16px;top:10px;color:var(--main);font-size:22px;opacity:.42}
+    .stat strong{color:var(--main);font-weight:800}
+    input,select,textarea,.editor{border-radius:18px!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.45)}
+    input:focus,select:focus,textarea:focus,.editor:focus{outline:2px solid rgba(77,92,246,.24);border-color:var(--main)!important}
+    .task{border-left-width:0!important;border-top:4px solid var(--main);border-radius:22px!important}
+    .task.priority-urgent{border-top-color:var(--red)!important}.task.priority-focus{border-top-color:var(--blue)!important}.task.priority-important{border-top-color:var(--amber)!important}.task.priority-general{border-top-color:var(--green)!important}
+    .urgent{background:var(--red)!important}.focus{background:var(--blue)!important}.important{background:var(--amber)!important}.general{background:var(--green)!important}
+    .status-open{color:var(--main)!important;background:#eeeeff!important}
+    .month{gap:8px}.day{border-radius:18px!important;background:#fffefa!important}.day.selected{border-color:var(--main)!important;box-shadow:0 0 0 3px rgba(77,92,246,.18)!important}.dow{color:var(--main)}
+    .email-row{border-radius:18px!important}.email-row.active{border-color:var(--main)!important;box-shadow:0 0 0 3px rgba(77,92,246,.16)!important}.email-body,.summary-box,.todo-item{background:#f7f6ff!important;border-color:#dfdcff!important;border-radius:18px!important}
+    .note{border-radius:4px 22px 8px 22px!important;border-color:#ebe0a0!important}
+    .note:nth-child(3n+1){background:linear-gradient(180deg,#fff4a8,#fffbe5)!important}.note:nth-child(3n+2){background:linear-gradient(180deg,#e0ddff,#fbfaff)!important;border-color:#c9c5ff!important}.note:nth-child(3n+3){background:linear-gradient(180deg,#ffddec,#fff7fb)!important;border-color:#f1bdd3!important}
+    .note:before{background:rgba(77,92,246,.18)!important}
+    .note .mini{color:var(--main);border-color:rgba(77,92,246,.2)!important}
+    .toast{background:#191824!important;border:1px solid rgba(255,255,255,.18);border-radius:18px!important}
+    @media(max-width:860px){main{padding:16px}.top{align-items:flex-start}.stats{grid-template-columns:1fr!important}}
+  </style>
+  <style>
+    .note.c-blue{background:#5f9cff!important}
+    .note.c-violet{background:#7d88ff!important}
+    .note.c-yellow{background:#f4ff28!important}
+    .note.c-pink{background:#f79bdd!important}
+    .note.c-orange{background:#ff8746!important}
+    .note.c-lime{background:#d6f04f!important}
+    .note:nth-child(n){background:var(--note-bg)!important}
+    .note.c-blue{--note-bg:#5f9cff}.note.c-violet{--note-bg:#7d88ff}.note.c-yellow{--note-bg:#f4ff28}.note.c-pink{--note-bg:#f79bdd}.note.c-orange{--note-bg:#ff8746}.note.c-lime{--note-bg:#d6f04f}
+  </style>
+  <style>
+    .notify-icon{position:relative;display:grid;place-items:center}
+    .notify-badge{position:absolute;right:-7px;top:-7px;min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:#ef3b5d;color:#fff;border:2px solid #fff;font-size:12px;font-weight:800;line-height:18px;text-align:center;box-shadow:0 8px 16px rgba(239,59,93,.28)}
+    .notify-panel{position:fixed;right:18px;top:78px;z-index:8;width:min(420px,calc(100vw - 28px));max-height:70vh;overflow:auto}
+    .notify-item{padding:12px;border:1px solid var(--line);border-radius:16px;background:#fffefa}
+    .notify-item h4{margin-bottom:4px}.notify-item p{margin:0;color:var(--muted);font-size:13px}
+  </style>
+  <style>
+    .side nav{flex:0!important;align-content:start!important;grid-auto-rows:min-content!important}
+    .nav{height:48px!important;min-height:48px!important;max-height:48px!important;border-radius:18px!important;display:flex!important;align-items:center!important;width:100%!important}
+    .nav.active{border-radius:18px!important}
+    .actions{align-items:center!important;align-content:center!important}
+    .task{align-items:start!important}
+    .task .actions{align-self:start!important;justify-content:flex-end!important}
+    .task .mini{height:42px!important;min-height:42px!important;width:auto!important;min-width:64px!important;padding:0 14px!important;border-radius:18px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;white-space:nowrap!important}
+    .toolbar .btn{height:48px!important;min-height:48px!important;border-radius:18px!important}
+    .btn{align-items:center!important;justify-content:center!important}
+    .icon{min-width:42px!important;max-width:42px!important;min-height:42px!important;max-height:42px!important;border-radius:50%!important}
+    .note .mini{min-width:34px!important}
+  </style>
+  <style>
+    .task[data-open-task]{cursor:pointer}
+    .task[data-open-task]:hover{box-shadow:0 20px 42px rgba(42,38,95,.13)!important;transform:translateY(-1px)}
+    .modal{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:18px;background:rgba(24,23,31,.36);backdrop-filter:blur(5px)}
+    .modal-card{width:min(980px,100%);max-height:92vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:0 28px 70px rgba(24,23,31,.22);padding:18px}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+    .modal-grid{display:grid;grid-template-columns:1.2fr .85fr .85fr .85fr;gap:10px}
+    .modal-grid textarea,.modal-grid .wide{grid-column:1/-1}
+    .history-box{display:grid;gap:8px;max-height:210px;overflow:auto;padding:10px;border:1px solid var(--line);border-radius:18px;background:#f7f6ff}
+    .history-item{padding:10px 12px;border-radius:14px;background:#fff;border:1px solid #dfdcff}
+    .history-item strong{display:block;margin-bottom:3px}
+    .history-item p{margin:0;color:var(--muted);line-height:1.5;white-space:pre-wrap}
+    @media(max-width:860px){.modal{place-items:end center;padding:0}.modal-card{border-radius:24px 24px 0 0;max-height:94vh}.modal-grid{grid-template-columns:1fr}}
+  </style>
+  <style>
+    .diary-form{background:linear-gradient(180deg,#fffefa,#f7f6ff)!important}
+    .diary-editor{min-height:260px!important;background:#fffefa!important;line-height:1.8}
+    .diary-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+    .diary-card{padding:18px;border-radius:24px!important;border:1px solid var(--line);background:#fffefa!important;box-shadow:0 16px 34px rgba(42,38,95,.08)!important}
+    .diary-card .diary-date{display:inline-flex;padding:5px 10px;border-radius:999px;background:#eeeeff;color:var(--main);font-weight:800;font-size:12px;margin-bottom:10px}
+    .diary-card .content{max-height:360px;overflow:auto}
+    .diary-card img,.diary-editor img{border-radius:18px;display:block;margin:10px 0;object-fit:cover;cursor:pointer}
+    .diary-card img.img-small,.diary-editor img.img-small{width:110px;max-width:100%}
+    .diary-card img.img-medium,.diary-editor img.img-medium{width:220px;max-width:100%}
+    .diary-card img.img-large,.diary-editor img.img-large{width:100%;max-height:360px}
+    .global-date-filter{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+    .global-date-filter input{width:168px!important;height:42px!important;padding:8px 12px!important}
+    .global-date-filter .mini{height:42px!important;min-height:42px!important;min-width:76px!important;border-radius:18px!important;background:#eeeeff!important;color:var(--main)!important}
+    @media(max-width:860px){.global-date-filter{width:100%;order:3}.global-date-filter input{flex:1;width:auto!important}.top{flex-wrap:wrap}}
+  </style>
+</head>
+<body>
+  <div id="login" class="login">
+    <section class="login-card">
+      <div class="mark">AI</div>
+      <h1>เลขาส่วนตัว</h1>
+      <p class="muted">จัดงาน นัดหมาย โน้ต และแจ้งเตือน แบบเปิดไฟล์เดียวก็ใช้ได้</p>
+      <button id="enterBtn" class="btn primary">เข้าสู่ระบบด้วย Google</button>
+      <button id="localEnterBtn" class="btn ghost" type="button" style="margin-top:10px">ใช้งานในเครื่อง</button>
+      <p id="loginStatus" class="muted"></p>
+    </section>
+  </div>
+
+  <div id="app" class="shell hidden">
+    <aside id="side" class="side">
+      <div class="brand"><div class="mark">AI</div><div><strong>เลขาส่วนตัว</strong><div class="muted">ใช้งานในเครื่อง</div></div></div>
+      <nav>
+        <button class="nav active" data-view="dashboard">ภาพรวม</button>
+        <button class="nav" data-view="tasks">งาน</button>
+        <button class="nav" data-view="calendar">นัดหมาย</button>
+        <button class="nav" data-view="notes">โน้ต</button>
+        <button class="nav" data-view="diary">ไดอารี่</button>
+        <button class="nav" data-view="emails">อีเมล</button>
+        <button class="nav" data-view="settings">ตั้งค่า</button>
+      </nav>
+      <button id="logoutBtn" class="btn ghost">ออกจากระบบ</button>
+    </aside>
+    <main>
+      <header class="top">
+        <button id="menuBtn" class="icon menu">☰</button>
+        <div><h2 id="title">ภาพรวม</h2><div id="today" class="muted"></div></div>
+        <div class="spacer"></div>
+        <div class="global-date-filter">
+          <input id="globalDateFilter" type="date" aria-label="กรองวันที่">
+          <button id="clearGlobalDate" class="mini" type="button">ทั้งหมด</button>
+        </div>
+        <button id="notifyBtn" class="icon notify-icon" type="button">🔔<span id="notifyBadge" class="notify-badge hidden">0</span></button>
+      </header>
+      <section id="notifyPanel" class="panel notify-panel hidden">
+        <div class="head"><h3>รายการแจ้งเตือน</h3><button id="closeNotifyPanel" class="btn ghost" type="button">ปิด</button></div>
+        <div id="notifyList" class="list"></div>
+      </section>
+
+      <section id="dashboard" class="view">
+        <div class="stats">
+          <article class="card stat"><span>งานค้าง</span><strong id="openCount">0</strong></article>
+          <article class="card stat"><span>ด่วนมาก</span><strong id="urgentCount">0</strong></article>
+          <article class="card stat"><span>ใกล้หมดเวลา</span><strong id="focusCount">0</strong></article>
+          <article class="card stat"><span>งานสำเร็จ</span><strong id="todayCount">0</strong></article>
+          <article class="card stat"><span>อีเมลสำคัญ</span><strong id="importantEmailCount">0</strong></article>
+          <article class="card stat"><span>ปิดแล้ว</span><strong id="closedCount">0</strong></article>
+        </div>
+        <section class="panel"><div class="head"><h3>งานค้างเรียงตามความสำคัญ</h3><button class="btn soft" data-jump="tasks">เพิ่มงาน</button></div><div id="priorityList" class="list"></div></section>
+        <section id="pinnedPanel" class="panel hidden"><div class="head"><h3>โน้ตปักหมุด</h3><button class="btn soft" data-jump="notes">ดูโน้ต</button></div><div id="pinnedList" class="notes"></div></section>
+      </section>
+
+      <section id="tasks" class="view hidden">
+        <form id="taskForm" class="panel task-form">
+          <input id="taskId" type="hidden"><input id="taskTitle" required placeholder="ชื่องาน">
+          <select id="taskCategory"><option>ออนไลน์</option><option>หน่วยรถ</option><option>บริหาร</option><option>โมเดิร์นเทรด</option><option>New Product</option><option>บอส</option><option>อาจารย์</option><option>งานออกแบบ</option><option>การตลาด</option><option>อบรม/ประชุม</option><option>งานประสานงาน</option><option>งานโปรเจค</option><option>ส่วนตัว</option><option selected>อื่นๆ</option></select>
+          <select id="taskPriority"><option value="urgent">ด่วนมาก</option><option value="important">สำคัญ</option><option value="general" selected>ทั่วไป</option><option value="longterm">ระยะยาว</option></select>
+          <select id="taskStatus"><option value="not_started" selected>ยังไม่เริ่ม</option><option value="doing">กำลังทำ</option><option value="waiting">รอดำเนินการต่อ</option><option value="done">เสร็จแล้ว</option><option value="closed">ปิดงาน</option></select>
+          <label class="field">วันที่แจ้งเตือน<input id="taskAlertAt" type="datetime-local"></label>
+          <select id="taskRepeat"><option value="none" selected>ไม่แจ้งเตือนซ้ำ</option><option value="daily">ซ้ำทุกวัน</option><option value="weekly">ซ้ำทุกสัปดาห์</option><option value="monthly">ซ้ำทุกเดือน</option></select>
+          <label class="field">วันที่ถึงกำหนดส่งงาน<input id="taskDue" type="datetime-local"></label>
+          <select id="taskReminder"><option value="0">ไม่เตือนก่อนถึงเวลา</option><option value="5">เตือนก่อน 5 นาที</option><option value="15">เตือนก่อน 15 นาที</option><option value="30">เตือนก่อน 30 นาที</option><option value="60">เตือนก่อน 1 ชั่วโมง</option><option value="1440" selected>เตือนก่อน 1 วัน</option></select>
+          <input id="taskLink1" type="url" placeholder="ลิงก์แนบ 1">
+          <input id="taskLink2" type="url" placeholder="ลิงก์แนบ 2">
+          <input id="taskLink3" type="url" placeholder="ลิงก์แนบ 3">
+          <textarea id="taskDetail" placeholder="รายละเอียด"></textarea>
+          <button id="saveTask" class="btn primary" type="submit">บันทึกงาน</button><button id="cancelTask" class="btn ghost hidden" type="button">ยกเลิก</button>
+        </form>
+        <section class="toolbar"><input id="taskSearch" placeholder="ค้นหางาน"><select id="priorityFilter"><option value="all">ทุกความสำคัญ</option><option value="urgent">ด่วนมาก</option><option value="important">สำคัญ</option><option value="general">ทั่วไป</option><option value="longterm">ระยะยาว</option></select><select id="statusFilter"><option value="open">งานค้าง</option><option value="all">ทั้งหมด</option><option value="not_started">ยังไม่เริ่ม</option><option value="doing">กำลังทำ</option><option value="waiting">รอดำเนินการต่อ</option><option value="done">เสร็จแล้ว</option><option value="closed">ปิดงาน</option></select><button id="exportMonthBtn" class="btn soft" type="button">Export ตารางงานเดือนนี้</button></section>
+        <div id="taskList" class="list"></div>
+      </section>
+
+      <section id="calendar" class="view hidden">
+        <section class="panel">
+          <div class="head"><h3>เพิ่มนัดหมาย</h3><button id="cancelEvent" class="btn ghost hidden" type="button">ยกเลิก</button></div>
+          <form id="eventForm" class="task-form">
+            <input id="eventId" type="hidden">
+            <input id="eventTitle" required placeholder="ชื่อนัดหมาย">
+            <label class="field">เริ่ม<input id="eventStart" type="datetime-local" required></label>
+            <label class="field">สิ้นสุด<input id="eventEnd" type="datetime-local"></label>
+            <input id="eventLocation" placeholder="สถานที่ / ช่องทาง">
+            <textarea id="eventDetail" placeholder="รายละเอียดนัดหมาย"></textarea>
+            <button id="saveEvent" class="btn primary" type="submit">บันทึกนัดหมาย</button>
+          </form>
+        </section>
+        <section class="panel"><div class="head"><button id="prevMonth" class="icon">‹</button><h3 id="monthTitle">ปฏิทิน</h3><button id="nextMonth" class="icon">›</button></div><div id="monthGrid" class="month"></div></section>
+        <section class="panel"><div class="head"><h3 id="dateTitle">รายการประจำวัน</h3><input id="calendarDate" type="date"></div><div id="dayList" class="list"></div></section>
+      </section>
+
+      <section id="notes" class="view hidden">
+        <form id="noteForm" class="panel note-form">
+          <input id="noteId" type="hidden"><input id="noteTitle" required placeholder="หัวข้อโน้ต">
+          <div class="tools"><button class="mini" type="button" data-format="bold">B</button><button class="mini" type="button" data-format="italic">I</button><button class="mini" type="button" data-format="hilite">ไฮไลต์</button><button class="mini" type="button" data-emoji="🙂">🙂</button><button class="mini" type="button" data-emoji="✅">✅</button><button class="mini" type="button" data-emoji="⭐">⭐</button><label class="mini pick">รูปภาพ<input id="noteImage" type="file" accept="image/*"></label></div>
+          <div id="imageControls" class="img-controls hidden"><span class="muted">ขนาดรูปที่เลือก</span><button class="mini" type="button" data-img-size="small">เล็ก</button><button class="mini" type="button" data-img-size="medium">กลาง</button><button class="mini" type="button" data-img-size="large">ใหญ่</button></div>
+          <div id="noteEditor" class="editor" contenteditable="true" data-placeholder="ข้อความโน้ต"></div>
+          <label class="field"><span><input id="notePinned" type="checkbox" style="width:auto"> ปักหมุดขึ้นหน้าภาพรวม</span></label>
+          <button id="saveNote" class="btn primary" type="submit">บันทึกโน้ต</button><button id="cancelNote" class="btn ghost hidden" type="button">ยกเลิก</button>
+        </form>
+        <section class="toolbar"><input id="noteSearch" placeholder="ค้นหาโน้ต"></section><div id="noteList" class="notes"></div>
+      </section>
+
+      <section id="diary" class="view hidden">
+        <form id="diaryForm" class="panel note-form diary-form">
+          <input id="diaryId" type="hidden">
+          <div class="head">
+            <h3>ไดอารี่ประจำวัน</h3>
+            <label class="field">วันที่<input id="diaryDate" type="date"></label>
+          </div>
+          <input id="diaryTitle" required placeholder="หัวข้อวันนี้">
+          <div class="tools">
+            <button class="mini" type="button" data-diary-format="bold">B</button>
+            <button class="mini" type="button" data-diary-format="italic">I</button>
+            <button class="mini" type="button" data-diary-format="hilite">ไฮไลต์</button>
+            <button class="mini" type="button" data-diary-emoji="🙂">🙂</button>
+            <button class="mini" type="button" data-diary-emoji="💙">💙</button>
+            <button class="mini" type="button" data-diary-emoji="✨">✨</button>
+            <button class="mini" type="button" data-diary-emoji="✅">✅</button>
+            <label class="mini pick">รูปภาพ<input id="diaryImage" type="file" accept="image/*"></label>
+          </div>
+          <div id="diaryImageControls" class="img-controls hidden"><span class="muted">ขนาดรูปที่เลือก</span><button class="mini" type="button" data-diary-img-size="small">เล็ก</button><button class="mini" type="button" data-diary-img-size="medium">กลาง</button><button class="mini" type="button" data-diary-img-size="large">ใหญ่</button></div>
+          <div id="diaryEditor" class="editor diary-editor" contenteditable="true" data-placeholder="วันนี้เกิดอะไรขึ้นบ้าง..."></div>
+          <div class="actions">
+            <button id="saveDiary" class="btn primary" type="submit">บันทึกไดอารี่</button>
+            <button id="cancelDiary" class="btn ghost hidden" type="button">ยกเลิก</button>
+          </div>
+        </form>
+        <section class="toolbar"><input id="diarySearch" placeholder="ค้นหาไดอารี่"><input id="diaryFilterDate" type="date"><button id="clearDiaryFilter" class="btn soft" type="button">ดูทั้งหมด</button></section>
+        <div id="diaryList" class="diary-list"></div>
+      </section>
+
+      <section id="emails" class="view hidden">
+        <section class="panel">
+          <div class="head"><h3>เชื่อม Gmail อัตโนมัติ</h3><button id="fetchGmailBtn" class="btn primary" type="button">ดึงอีเมลล่าสุด</button></div>
+          <div class="note-form">
+            <select id="gmailAccount">
+              <option value="delongcoffee.mt@gmail.com">delongcoffee.mt@gmail.com</option>
+              <option value="kaikarn.senkaew@gmail.com">kaikarn.senkaew@gmail.com</option>
+              <option value="custom">บัญชีอื่น</option>
+            </select>
+            <input id="customGmailAccount" class="hidden" type="email" placeholder="พิมพ์อีเมลที่ต้องการเพิ่ม เช่น name@gmail.com">
+            <input id="gmailEndpoint" placeholder="วางลิงก์ Google Apps Script Web App ของบัญชีนี้">
+            <button id="saveGmailEndpoint" class="btn soft" type="button">บันทึกลิงก์เชื่อม Gmail</button>
+            <label class="field"><span><input id="autoGmailFetch" type="checkbox" style="width:auto"> ดึงและสรุปอีเมลอัตโนมัติ</span></label>
+            <label class="field">ดึงทุกกี่นาที<input id="gmailInterval" type="number" min="5" max="120" value="15"></label>
+            <p class="muted">เมื่อบันทึกลิงก์แล้ว แอปจะดึงและสรุปอีเมลให้อัตโนมัติทุกครั้งที่เปิดแอปและตามรอบเวลาที่ตั้งไว้</p>
+          </div>
+        </section>
+        <section class="panel">
+          <div class="head"><h3>เพิ่มอีเมลเอง</h3><button id="clearEmailForm" class="btn ghost" type="button">ล้างฟอร์ม</button></div>
+          <form id="emailForm" class="email-compose">
+            <select id="emailAccount">
+              <option value="delongcoffee.mt@gmail.com">delongcoffee.mt@gmail.com</option>
+              <option value="kaikarn.senkaew@gmail.com">kaikarn.senkaew@gmail.com</option>
+            </select>
+            <input id="emailFrom" placeholder="ผู้ส่ง">
+            <input id="emailSubject" placeholder="หัวข้ออีเมล">
+            <textarea id="emailBody" required placeholder="วางเนื้อหาอีเมลตรงนี้ แล้วกดสรุป" style="min-height:170px"></textarea>
+            <button class="btn primary" type="submit">สรุปอีเมล</button>
+          </form>
+        </section>
+        <section class="panel">
+          <div class="head"><h3>หน้าต่างอีเมล</h3><button id="clearEmailSummaries" class="btn ghost" type="button">ล้างรายการ</button></div>
+          <div class="email-window">
+            <div id="emailSummaryList" class="email-list"></div>
+            <div id="emailDetail" class="email-detail"></div>
+          </div>
+        </section>
+      </section>
+
+      <section id="settings" class="view hidden">
+        <section class="panel"><h3>แจ้งเตือนเข้า LINE</h3><p class="muted">วางลิงก์ Web app URL ที่ลงท้าย /exec จาก Google Apps Script และต้องเพิ่ม LINE Official Account เป็นเพื่อนก่อน</p><input id="lineWebhookUrl" type="url" placeholder="วางลิงก์ LINE webhook เช่น https://.../exec"><div class="actions" style="margin-top:10px"><button id="saveLineWebhook" class="btn soft" type="button">บันทึกลิงก์ LINE</button><button id="testLineWebhook" class="btn ghost" type="button">ทดสอบ LINE</button><button id="sendLineSummary" class="btn primary" type="button">ส่งภาพรวมงานเข้า LINE</button></div></section>
+        <section class="panel"><h3>สำรองข้อมูล</h3><p class="muted">ใช้กันข้อมูลหาย หรือย้ายเครื่อง</p><button id="exportBtn" class="btn soft">ดาวน์โหลดข้อมูลสำรอง</button><input id="importInput" type="file" accept="application/json"></section>
+      </section>
+    </main>
+  </div>
+
+  <div id="taskModal" class="modal hidden">
+    <section class="modal-card">
+      <div class="modal-head">
+        <div>
+          <h3>อัปเดตงาน</h3>
+          <p class="muted">แก้ไขรายละเอียดงานและบันทึกความคืบหน้าไว้ดูย้อนหลัง</p>
+        </div>
+        <button id="closeTaskModal" class="icon" type="button">×</button>
+      </div>
+      <form id="taskModalForm" class="modal-grid">
+        <input id="modalTaskId" type="hidden">
+        <input id="modalTaskTitle" required placeholder="ชื่องาน">
+        <select id="modalTaskCategory"><option>ออนไลน์</option><option>หน่วยรถ</option><option>บริหาร</option><option>โมเดิร์นเทรด</option><option>New Product</option><option>บอส</option><option>อาจารย์</option><option>งานออกแบบ</option><option>การตลาด</option><option>อบรม/ประชุม</option><option>งานประสานงาน</option><option>งานโปรเจค</option><option>ส่วนตัว</option><option>อื่นๆ</option></select>
+        <select id="modalTaskPriority"><option value="urgent">ด่วนมาก</option><option value="important">สำคัญ</option><option value="general">ทั่วไป</option><option value="longterm">ระยะยาว</option></select>
+        <select id="modalTaskStatus"><option value="not_started">ยังไม่เริ่ม</option><option value="doing">กำลังทำ</option><option value="waiting">รอดำเนินการต่อ</option><option value="done">เสร็จแล้ว</option><option value="closed">ปิดงาน</option></select>
+        <label class="field">วันที่แจ้งเตือน<input id="modalTaskAlertAt" type="datetime-local"></label>
+        <select id="modalTaskRepeat"><option value="none">ไม่แจ้งเตือนซ้ำ</option><option value="daily">ซ้ำทุกวัน</option><option value="weekly">ซ้ำทุกสัปดาห์</option><option value="monthly">ซ้ำทุกเดือน</option></select>
+        <label class="field">วันที่ถึงกำหนดส่งงาน<input id="modalTaskDue" type="datetime-local"></label>
+        <select id="modalTaskReminder"><option value="0">ไม่เตือนก่อนถึงเวลา</option><option value="5">เตือนก่อน 5 นาที</option><option value="15">เตือนก่อน 15 นาที</option><option value="30">เตือนก่อน 30 นาที</option><option value="60">เตือนก่อน 1 ชั่วโมง</option><option value="1440">เตือนก่อน 1 วัน</option></select>
+        <input id="modalTaskLink1" type="url" placeholder="ลิงก์แนบ 1">
+        <input id="modalTaskLink2" type="url" placeholder="ลิงก์แนบ 2">
+        <input id="modalTaskLink3" type="url" placeholder="ลิงก์แนบ 3">
+        <textarea id="modalTaskDetail" class="wide" placeholder="รายละเอียด"></textarea>
+        <textarea id="modalTaskUpdateNote" class="wide" placeholder="พิมพ์อัปเดตความคืบหน้า เช่น โทรประสานงานแล้ว / รอเอกสาร / ส่งไฟล์ให้ทีมแล้ว"></textarea>
+        <div class="wide">
+          <h4>ประวัติการอัปเดตงาน</h4>
+          <div id="modalTaskHistory" class="history-box"></div>
+        </div>
+        <div class="actions wide">
+          <button class="btn primary" type="submit">บันทึกการอัปเดต</button>
+          <button id="cancelTaskModal" class="btn ghost" type="button">ยกเลิก</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+  <script>
+    const KEY="secretary-simple-v1";
+    const rank={urgent:1,focus:2,important:2,general:3,longterm:4};
+    const label={urgent:"ด่วนมาก",focus:"โฟกัส",important:"สำคัญ",general:"ทั่วไป",longterm:"ระยะยาว"};
+    const firebaseConfig={apiKey:"AIzaSyBX_D4AWRxJT1cvuF6whhRfx_BbtKLhjQk",authDomain:"kai-secretary-app.firebaseapp.com",projectId:"kai-secretary-app",storageBucket:"kai-secretary-app.firebasestorage.app",messagingSenderId:"119650104063",appId:"1:119650104063:web:9eccaf61e0d49fe57f92ca",measurementId:"G-7QVHC6THZV"};
+    const baseState={user:null,tasks:[],events:[],notes:[],diaries:[],emailSummaries:[],gmailEndpoints:{},gmailAuto:true,gmailInterval:15,gmailSeen:{},lineWebhook:"",notificationSeen:{}};
+    let cloud={active:false,user:null,auth:null,db:null,modules:null,unsubscribe:null,loading:false,saving:false,lastRemote:""};
+    const emailTaskSeed=[
+      {source:"email-2026-06-10-promotion",title:"ส่ง Proposal Promotion Brief TAB 34-37 ภายใน 12 มิถุนายน 2026",priority:"urgent",due:"2026-06-12T17:00",detail:"จากอีเมล Promotion brief Tab 34-37 (BOGOF): ตรวจไฟล์ Proposal Form และส่ง proposal ให้ทันกำหนด"},
+      {source:"email-2026-06-10-proposal-form",title:"ตรวจไฟล์ Proposal Form HOT BEVERAGE และเลือกสินค้าที่จะเสนอ",priority:"urgent",due:"2026-06-12T12:00",detail:"ให้ความสำคัญกับสินค้า Hyper ที่มี Stock Day On Hand และ High Provision"},
+      {source:"email-2026-06-10-wht",title:"ส่ง soft file หนังสือรับรองหัก ณ ที่จ่ายให้ Kingdaw Kosai",priority:"focus",due:"",detail:"จากอีเมลใบเสร็จ/ใบกำกับภาษี เพจ Drama Addict"},
+      {source:"email-2026-06-10-accounting-doc",title:"ตรวจและจัดส่งเอกสารตัวจริงให้บริษัท เอพีที การบัญชี จำกัด",priority:"focus",due:"",detail:"ที่อยู่ตามอีเมล: บริษัท เอพีที การบัญชี จำกัด 855/14 ซ.บางแค16 แขวงบางแค เขตบางแค กรุงเทพฯ 10160"},
+      {source:"email-2026-06-10-google-security",title:"ตรวจความปลอดภัยบัญชี Google: โครงการไม่มีชื่อ",priority:"urgent",due:"",detail:"ตรวจว่าเป็นโปรเจกต์ที่อนุญาตเองหรือไม่ ถ้าไม่ใช่ให้ยกเลิกสิทธิ์"},
+      {source:"email-2026-06-10-skilllane-info",title:"ตรวจข้อมูลผู้เรียน SkillLane ว่าส่งครบแล้วหรือยัง",priority:"focus",due:"",detail:"ข้อมูลที่ต้องมี: ชื่อ, นามสกุล, อีเมลผู้เรียน, ชื่อคอร์ส, อีเมลรับใบเสร็จ/ใบกำกับภาษี"},
+      {source:"email-2026-06-10-skilllane-forward",title:"ส่งต่อวิธีเข้าเรียน SkillLane ให้ผู้เรียน",priority:"important",due:"",detail:"SkillLane แจ้งว่านำข้อมูลผู้เรียนเข้าระบบแล้ว"}
+    ];
+    const emailSummarySeed=[
+      {id:"seed-mail-promo",account:"kaikarn.senkaew@gmail.com",from:"Natsupa Markmanee / Lotus's",subject:"Promotion brief Tab 34-37 (BOGOF) - Submit proposal",priority:"urgent",replyNeeded:true,created:"2026-06-10T09:10:00+07:00",summary:"มีการส่ง Promotion Brief TAB 34-37 ธีม BOGOF / Rainy Theme ช่วง 20 Aug - 16 Sep 2026 ให้พิจารณาและส่ง proposal ภายใน 12 มิถุนายน 2026",todos:["ตรวจไฟล์แนบ Proposal Form HOT BEVERAGE update CPXTRA NEW FORM","เลือกสินค้าเสนอ Promotion โดยเน้นสินค้า Hyper ที่มี Stock Day On Hand และ High Provision","ส่ง proposal ภายในวันที่ 12 มิถุนายน 2026"],body:"Promotion Brief TAB 34-37\nTheme: BOGOF / Rainy Theme\nPromotion period: 20 Aug - 16 Sep 2026\nCMY: 20 - 27 Aug 2026\n\nรบกวนใช้ไฟล์ Proposal Form HOT BEVERAGE update CPXTRA NEW FORM และ Submit proposal ภายในวันที่ 12 JUNE 2026\n\nสำหรับ SXGP Format Hyper ให้เลือกสินค้าที่มี Stock Day On Hand และ High Provision เป็น priority\nสำหรับ SXGP Format Super / Mini สามารถเสนอสินค้าตามปกติ"},
+      {id:"seed-mail-security",account:"kaikarn.senkaew@gmail.com",from:"Google",subject:"แจ้งเตือนความปลอดภัยบัญชี Google",priority:"urgent",replyNeeded:false,created:"2026-06-10T08:40:00+07:00",summary:"มีการอนุญาตให้โครงการไม่มีชื่อเข้าถึงข้อมูลบางส่วนในบัญชี Google ควรตรวจสอบว่าเป็นโปรเจกต์ที่กายอนุญาตเองหรือไม่",todos:["ตรวจว่าโครงการไม่มีชื่อเป็นโปรเจกต์ที่กายสร้างไว้เองหรือไม่","ถ้าไม่ใช่ ให้ยกเลิกสิทธิ์ในบัญชี Google ทันที"],body:"Google แจ้งว่ามีการอนุญาตให้โครงการไม่มีชื่อเข้าถึงข้อมูลบางส่วนในบัญชี\n\nสิ่งสำคัญ: ตรวจสอบว่าเป็นโปรเจกต์ที่กายสร้างไว้เองหรือไม่ หากไม่ใช่ ให้ยกเลิกสิทธิ์ทันทีเพื่อความปลอดภัย"},
+      {id:"seed-mail-tax",account:"kaikarn.senkaew@gmail.com",from:"Kingdaw Kosai",subject:"ใบเสร็จ/ใบกำกับภาษี เพจ Drama Addict",priority:"focus",replyNeeded:true,created:"2026-06-10T08:20:00+07:00",summary:"ส่งใบเสร็จรับเงิน/ใบกำกับภาษีแนบมา และขอ soft file หนังสือรับรองหัก ณ ที่จ่าย พร้อมให้จัดส่งเอกสารตัวจริง",todos:["ส่ง soft file หนังสือรับรองหัก ณ ที่จ่ายกลับทางอีเมล","ตรวจเอกสารแนบ RT-20260500017 คชศิลป์ เบเวอร์เรจ.pdf","ส่งเอกสารตัวจริงไปยังบริษัท เอพีที การบัญชี จำกัด"],body:"เรียนผู้เกี่ยวข้อง\n\nแนบใบเสร็จรับเงิน/ใบกำกับภาษีมาให้ตรวจสอบ รบกวนส่ง soft file หนังสือรับรองหัก ณ ที่จ่ายกลับทางอีเมล และจัดส่งเอกสารตัวจริงไปยังบริษัท เอพีที การบัญชี จำกัด\n\nที่อยู่ตามที่ระบุในอีเมลเดิม"},
+      {id:"seed-mail-skilllane-info",account:"kaikarn.senkaew@gmail.com",from:"SkillLane support",subject:"SkillLane ขอข้อมูลผู้เรียน",priority:"focus",replyNeeded:true,created:"2026-06-10T08:00:00+07:00",summary:"SkillLane ขอข้อมูลผู้เรียนเพื่อดำเนินการนำข้อมูลเข้าระบบและออกใบกำกับภาษี",todos:["ตรวจว่าข้อมูลผู้เรียนส่งครบแล้วหรือยัง","ถ้ายังไม่ครบ ให้ตอบกลับชื่อ นามสกุล อีเมลผู้เรียน ชื่อคอร์ส และอีเมลรับใบเสร็จ/ใบกำกับภาษี"],body:"SkillLane ขอข้อมูลผู้เรียนเพื่อดำเนินการนำข้อมูลเข้าระบบและออกใบกำกับภาษี\n\nข้อมูลที่ต้องใช้: ชื่อ, นามสกุล, อีเมลผู้เรียน, ชื่อคอร์ส, อีเมลรับใบเสร็จ/ใบกำกับภาษี\n\nรบกวนตรวจสอบและตอบกลับหากข้อมูลยังไม่ครบ"},
+      {id:"seed-mail-skilllane-class",account:"kaikarn.senkaew@gmail.com",from:"SkillLane support",subject:"SkillLane แจ้งวิธีเข้าเรียน",priority:"important",replyNeeded:false,created:"2026-06-10T07:45:00+07:00",summary:"SkillLane แจ้งว่านำข้อมูลผู้เรียนเข้าระบบแล้ว และส่งวิธีเข้าเรียน ควรส่งต่อให้ผู้เรียนที่เกี่ยวข้อง",todos:["ส่งต่อวิธีเข้าเรียนให้ผู้เรียนที่เกี่ยวข้อง","ตรวจว่าผู้เรียนเข้าใช้งานได้หรือไม่"],body:"SkillLane แจ้งว่านำข้อมูลผู้เรียนเข้าระบบแล้ว พร้อมส่งวิธีเข้าเรียน\n\nสิ่งที่ควรทำ: ส่งต่อวิธีเข้าเรียนให้ผู้เรียนที่เกี่ยวข้อง และตรวจสอบว่าผู้เรียนเข้าใช้งานได้หรือไม่"}
+    ];
+    let state=load(), month=new Date(), selectedImage=null, selectedDiaryImage=null, selectedEmailId=null, gmailTimer=null;
+    const $=id=>document.getElementById(id);
+    function normalizeState(data={}){return Object.assign({},baseState,data,{tasks:Array.isArray(data.tasks)?data.tasks:[],events:Array.isArray(data.events)?data.events:[],notes:Array.isArray(data.notes)?data.notes:[],diaries:Array.isArray(data.diaries)?data.diaries:[],emailSummaries:Array.isArray(data.emailSummaries)?data.emailSummaries:[],gmailEndpoints:data.gmailEndpoints||{},gmailSeen:data.gmailSeen||{},notificationSeen:data.notificationSeen||{}})}
+    function load(){try{return normalizeState(JSON.parse(localStorage.getItem(KEY)||"{}"))}catch{return normalizeState()}}
+    function saveLocal(){localStorage.setItem(KEY,JSON.stringify(state))}
+    function save(){saveLocal();syncCloud()}
+    function seedEmailTasks(){let added=false;emailTaskSeed.forEach(item=>{if(state.tasks.some(t=>t.source===item.source))return;state.tasks.unshift({id:id(),source:item.source,title:item.title,priority:item.priority,due:item.due,reminder:item.due?60:15,detail:item.detail,status:"open",created:new Date().toISOString(),updated:new Date().toISOString()});added=true});if(added)save()}
+    function seedEmailSummaries(){if((state.emailSummaries||[]).length)return;state.emailSummaries=emailSummarySeed;selectedEmailId=emailSummarySeed[0]?.id||null;save()}
+    function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+    function today(d=new Date()){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+    function toast(t){$("toast").textContent=t;$("toast").classList.remove("hidden");setTimeout(()=>$("toast").classList.add("hidden"),2500)}
+    function esc(s=""){return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
+    function strip(h=""){let d=document.createElement("div");d.innerHTML=h;return d.textContent||""}
+    function clean(h=""){let d=document.createElement("div");d.innerHTML=h;d.querySelectorAll("script,style,iframe,object,embed").forEach(n=>n.remove());d.querySelectorAll("*").forEach(n=>[...n.attributes].forEach(a=>{if(a.name.startsWith("on"))n.removeAttribute(a.name)}));return d.innerHTML}
+    function showApp(){ $("login").classList.add("hidden"); $("app").classList.remove("hidden"); render() }
+    function updateLoginStatus(text){if($("loginStatus"))$("loginStatus").textContent=text||""}
+    function renderAuth(){if(cloud.user){state.user={name:cloud.user.displayName||"กาย",email:cloud.user.email,uid:cloud.user.uid,photo:cloud.user.photoURL};$("logoutBtn").textContent="ออกจากระบบ Google";updateLoginStatus("ซิงก์กับ Google แล้ว: "+(cloud.user.email||""))}else updateLoginStatus("ยังไม่ได้เข้าสู่ระบบ Google")}
+    async function initFirebase(){if(cloud.active)return true;try{let appModule=await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js"),authModule=await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js"),dbModule=await import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js");let app=appModule.initializeApp(firebaseConfig);cloud.auth=authModule.getAuth(app);cloud.db=dbModule.getFirestore(app);cloud.modules={authModule,dbModule};cloud.active=true;authModule.onAuthStateChanged(cloud.auth,user=>{cloud.user=user;renderAuth();if(user){showApp();startCloudSync(user.uid)}else{if(cloud.unsubscribe)cloud.unsubscribe();cloud.unsubscribe=null;saveLocal();render()}});return true}catch(e){updateLoginStatus("เชื่อม Google ยังไม่ได้ ให้ลองหลังเอาขึ้นเว็บ");return false}}
+    async function signInGoogle(){let ok=await initFirebase();if(!ok){toast("ยังเชื่อม Google ไม่สำเร็จ");return}try{let provider=new cloud.modules.authModule.GoogleAuthProvider();await cloud.modules.authModule.signInWithPopup(cloud.auth,provider)}catch(e){toast("เข้าสู่ระบบ Google ไม่สำเร็จ อาจต้องเปิดจากเว็บออนไลน์")}}
+    async function signOutGoogle(){if(cloud.active&&cloud.auth)await cloud.modules.authModule.signOut(cloud.auth);cloud.user=null;state.user=null;saveLocal();$("app").classList.add("hidden");$("login").classList.remove("hidden");renderAuth()}
+    function cloudState(){return JSON.parse(JSON.stringify(state))}
+    async function syncCloud(){if(!cloud.active||!cloud.user||!cloud.modules||cloud.loading)return;try{cloud.saving=true;let {doc,setDoc,serverTimestamp}=cloud.modules.dbModule;await setDoc(doc(cloud.db,"users",cloud.user.uid,"app","state"),{state:cloudState(),updatedAt:serverTimestamp()},{merge:true})}catch(e){}finally{cloud.saving=false}}
+    function startCloudSync(uidValue){if(cloud.unsubscribe)cloud.unsubscribe();let {doc,onSnapshot,setDoc,serverTimestamp}=cloud.modules.dbModule,ref=doc(cloud.db,"users",uidValue,"app","state");cloud.unsubscribe=onSnapshot(ref,snap=>{if(!snap.exists()){setDoc(ref,{state:cloudState(),updatedAt:serverTimestamp()},{merge:true});return}let remote=snap.data()?.state;if(!remote)return;let raw=JSON.stringify(remote);if(raw===cloud.lastRemote)return;cloud.lastRemote=raw;cloud.loading=true;state=normalizeState(remote);saveLocal();cloud.loading=false;render()},()=>toast("ซิงก์ข้อมูลไม่ได้ ตรวจสอบ Firestore Rules"))}
+    function switchView(v){document.querySelectorAll(".view").forEach(x=>x.classList.add("hidden"));$(v).classList.remove("hidden");document.querySelectorAll(".nav").forEach(b=>b.classList.toggle("active",b.dataset.view===v));$("title").textContent={dashboard:"ภาพรวม",tasks:"งาน",calendar:"นัดหมาย",notes:"โน้ต",diary:"ไดอารี่",emails:"อีเมล",settings:"ตั้งค่า"}[v];$("side").classList.remove("open");render()}
+    function render(){ $("today").textContent=new Date().toLocaleDateString("th-TH",{weekday:"long",year:"numeric",month:"long",day:"numeric"}); renderDashboard(); renderTasks(); renderCalendar(); renderNotes(); renderDiary(); renderEmails(); updateNotificationBadge() }
+    function taskStatus(t){return t.status==="open"?"not_started":(t.status||"not_started")}
+    function statusText(s){s=s==="open"?"not_started":s;return({not_started:"ยังไม่เริ่ม",doing:"กำลังทำ",waiting:"รอดำเนินการต่อ",done:"เสร็จแล้ว",closed:"ปิดงาน"})[s]||"ยังไม่เริ่ม"}
+    function isOpenTask(t){let s=taskStatus(t);return s!=="done"&&s!=="closed"}
+    function isDueSoon(t){if(!t.due||!isOpenTask(t))return false;let diff=new Date(t.due).getTime()-Date.now();return diff>=0&&diff<=24*60*60000}
+    function taskSort(a,b){let order={urgent:0,important:1,general:2,longterm:3,focus:1};let sp={doing:0,waiting:1,not_started:2,closed:3,done:4};let s=(sp[taskStatus(a)]??2)-(sp[taskStatus(b)]??2);if(s)return s;let p=(order[a.priority]??9)-(order[b.priority]??9);if(p)return p;if(!a.due&&!b.due)return 0;if(!a.due)return 1;if(!b.due)return -1;return new Date(a.due)-new Date(b.due)}
+    function taskLinks(t){let links=[t.link1,t.link2,t.link3].filter(Boolean);return links.length?`<p>${links.map((u,i)=>`<a href="${esc(u)}" target="_blank" rel="noopener">ลิงก์ ${i+1}</a>`).join(" · ")}</p>`:""}
+    function taskCard(t){let done=taskStatus(t)==="done",closed=taskStatus(t)==="closed",cat=t.category||"อื่นๆ";return `<article class="card task priority-${t.priority} ${done?"done":""} ${closed?"closed":""}" data-open-task="${t.id}"><div><h4>${esc(t.title)}</h4><p><span class="badge ${t.priority}">P${rank[t.priority]||4} ${label[t.priority]||"ทั่วไป"}</span><span class="status status-${taskStatus(t)}">${statusText(taskStatus(t))}</span><span class="status">${esc(cat)}</span>${t.due?new Date(t.due).toLocaleString("th-TH"):"ไม่มีกำหนด"} ${t.reminder?` · เตือนก่อน ${t.reminder} นาที`:""}</p>${t.alertAt?`<p>แจ้งเตือน: ${new Date(t.alertAt).toLocaleString("th-TH")}${t.repeat&&t.repeat!=="none"?` · ซ้ำ ${repeatText(t.repeat)}`:""}</p>`:""}${t.detail?`<p>${esc(t.detail)}</p>`:""}${taskLinks(t)}</div><div class="actions"><button class="mini" data-edit-task="${t.id}">แก้ไข</button><button class="mini" data-toggle-task="${t.id}">${done?"เปิดใหม่":"เสร็จ"}</button><button class="mini" data-close-task="${t.id}">${closed?"เปิดใหม่":"ปิดงาน"}</button><button class="mini" data-del-task="${t.id}">ลบ</button></div></article>`}
+    function taskHistoryText(t){let h=t.history||[];return h.length?h.slice().reverse().map(x=>`<article class="history-item"><strong>${new Date(x.at).toLocaleString("th-TH")}</strong><p>${esc(x.text||"อัปเดตงาน")}</p></article>`).join(""):`<p class="muted">ยังไม่มีประวัติการอัปเดต</p>`}
+    function taskChangeText(old,t){if(!old)return"สร้างงานใหม่";let changes=[];if((old.title||"")!==t.title)changes.push("แก้ชื่องาน");if((old.category||"อื่นๆ")!==t.category)changes.push(`เปลี่ยนหมวดหมู่เป็น ${t.category}`);if((old.priority||"general")!==t.priority)changes.push(`เปลี่ยนความสำคัญเป็น ${label[t.priority]||"ทั่วไป"}`);if(taskStatus(old)!==taskStatus(t))changes.push(`เปลี่ยนสเต็ปงานเป็น ${statusText(taskStatus(t))}`);if((old.due||"")!==t.due)changes.push(`แก้กำหนดส่งเป็น ${t.due?new Date(t.due).toLocaleString("th-TH"):"ไม่มีกำหนด"}`);if((old.alertAt||"")!==t.alertAt)changes.push(`แก้เวลาแจ้งเตือนเป็น ${t.alertAt?new Date(t.alertAt).toLocaleString("th-TH"):"ไม่แจ้งเตือน"}`);if((old.detail||"")!==t.detail)changes.push("แก้รายละเอียด");if((old.link1||"")!==t.link1||(old.link2||"")!==t.link2||(old.link3||"")!==t.link3)changes.push("แก้ลิงก์แนบ");return changes.join("\n")}
+    function saveTaskWithHistory(old,t,note){let history=[...(old?.history||[])],change=taskChangeText(old,t),text=[note?.trim(),change].filter(Boolean).join("\n");if(text)history.push({at:new Date().toISOString(),text});t.history=history;t.updated=new Date().toISOString();state.tasks=old?state.tasks.map(x=>x.id===old.id?t:x):[t,...state.tasks]}
+    function fillModalTask(t){$("modalTaskId").value=t.id;$("modalTaskTitle").value=t.title;$("modalTaskCategory").value=t.category||"อื่นๆ";$("modalTaskPriority").value=t.priority||"general";$("modalTaskStatus").value=taskStatus(t);$("modalTaskAlertAt").value=t.alertAt||"";$("modalTaskRepeat").value=t.repeat||"none";$("modalTaskDue").value=t.due||"";$("modalTaskReminder").value=String(t.reminder||15);$("modalTaskLink1").value=t.link1||"";$("modalTaskLink2").value=t.link2||"";$("modalTaskLink3").value=t.link3||"";$("modalTaskDetail").value=t.detail||"";$("modalTaskUpdateNote").value="";$("modalTaskHistory").innerHTML=taskHistoryText(t)}
+    function openTaskModal(id){let t=state.tasks.find(x=>x.id===id);if(!t)return;fillModalTask(t);$("taskModal").classList.remove("hidden")}
+    function closeTaskModal(){$("taskModal").classList.add("hidden");$("taskModalForm").reset()}
+    function taskFromModal(old){return{...old,id:old.id,title:$("modalTaskTitle").value,category:$("modalTaskCategory").value,priority:$("modalTaskPriority").value,status:$("modalTaskStatus").value,due:$("modalTaskDue").value,alertAt:$("modalTaskAlertAt").value,repeat:$("modalTaskRepeat").value,reminder:Number($("modalTaskReminder").value),link1:$("modalTaskLink1").value.trim(),link2:$("modalTaskLink2").value.trim(),link3:$("modalTaskLink3").value.trim(),detail:$("modalTaskDetail").value,created:old.created||new Date().toISOString(),updated:new Date().toISOString(),history:old.history||[]}}
+    function repeatText(r){return({daily:"ทุกวัน",weekly:"ทุกสัปดาห์",monthly:"ทุกเดือน"})[r]||"ไม่ซ้ำ"}
+    function isEmailTask(t){return String(t.source||"").startsWith("email-")}
+    function globalDate(){return $("globalDateFilter")?.value||""}
+    function sameDay(value,date){if(!date)return true;if(!value)return false;try{return today(new Date(value))===date}catch{return String(value).startsWith(date)}}
+    function taskInDate(t,date){return !date||sameDay(t.due,date)||sameDay(t.alertAt,date)||sameDay(t.created,date)||sameDay(t.updated,date)}
+    function itemInDate(x,date){return !date||sameDay(x.date,date)||sameDay(x.created,date)||sameDay(x.updated,date)}
+    function renderDashboard(){let gd=globalDate(),workTasks=state.tasks.filter(t=>!isEmailTask(t)&&taskInDate(t,gd)),open=workTasks.filter(isOpenTask), closed=workTasks.filter(t=>taskStatus(t)==="closed"), done=workTasks.filter(t=>taskStatus(t)==="done");$("openCount").textContent=open.length;$("urgentCount").textContent=open.filter(t=>t.priority==="urgent").length;$("focusCount").textContent=open.filter(isDueSoon).length;$("todayCount").textContent=done.length;$("importantEmailCount").textContent=(state.emailSummaries||[]).filter(m=>(m.priority==="urgent"||m.priority==="focus")&&itemInDate(m,gd)).length;$("closedCount").textContent=closed.length;$("priorityList").innerHTML=open.sort(taskSort).map(taskCard).join("")||`<p class="muted">ยังไม่มีงานค้าง</p>`;let pins=state.notes.filter(n=>n.pinned&&itemInDate(n,gd)).sort((a,b)=>b.updated.localeCompare(a.updated)).slice(0,4);$("pinnedPanel").classList.toggle("hidden",!pins.length);$("pinnedList").innerHTML=pins.map(noteCard).join("")}
+    function renderTasks(){let q=$("taskSearch").value.toLowerCase(), pf=$("priorityFilter").value, sf=$("statusFilter").value,gd=globalDate();let arr=state.tasks.filter(t=>taskInDate(t,gd)&&(pf==="all"||t.priority===pf)&&(sf==="all"||taskStatus(t)===sf||(sf==="open"&&isOpenTask(t)))&&(`${t.title} ${t.category||""} ${t.detail||""}`.toLowerCase().includes(q))).sort(taskSort);$("taskList").innerHTML=arr.map(taskCard).join("")||`<p class="muted">ยังไม่มีรายการงาน</p>`}
+    function eventCard(ev){return `<article class="card task priority-focus"><div><h4>${esc(ev.title)}</h4><p><span class="badge focus">นัดหมาย</span>${new Date(ev.start).toLocaleString("th-TH")}${ev.end?` - ${new Date(ev.end).toLocaleTimeString("th-TH",{hour:"2-digit",minute:"2-digit"})}`:""}</p>${ev.location?`<p>สถานที่: ${esc(ev.location)}</p>`:""}${ev.detail?`<p>${esc(ev.detail)}</p>`:""}</div><div class="actions"><button class="mini" data-edit-event="${ev.id}">แก้ไข</button><button class="mini" data-del-event="${ev.id}">ลบ</button></div></article>`}
+    function renderCalendar(){let gd=globalDate();if(gd){$("calendarDate").value=gd;month=new Date(gd+"T00:00:00")}let sel=$("calendarDate").value||today();$("calendarDate").value=sel;$("dateTitle").textContent="รายการวันที่ "+new Date(sel+"T00:00:00").toLocaleDateString("th-TH");let dayEvents=(state.events||[]).filter(ev=>ev.start&&ev.start.startsWith(sel)).sort((a,b)=>new Date(a.start)-new Date(b.start)),dayTasks=state.tasks.filter(t=>t.due&&t.due.startsWith(sel)).sort(taskSort);$("dayList").innerHTML=[...dayEvents.map(eventCard),...dayTasks.map(taskCard)].join("")||`<p class="muted">วันนี้ยังไม่มีนัดหมาย</p>`;let y=month.getFullYear(),m=month.getMonth(),first=new Date(y,m,1),last=new Date(y,m+1,0),html=["อา","จ","อ","พ","พฤ","ศ","ส"].map(d=>`<div class="dow">${d}</div>`).join("");for(let i=0;i<first.getDay();i++)html+=`<div class="day blank"></div>`;for(let d=1;d<=last.getDate();d++){let dk=today(new Date(y,m,d)),tasks=state.tasks.filter(t=>t.due&&t.due.startsWith(dk)),events=(state.events||[]).filter(ev=>ev.start&&ev.start.startsWith(dk));html+=`<button class="day ${dk===sel?"selected":""}" data-day="${dk}"><strong>${d}</strong>${events.slice(0,2).map(ev=>`<span class="event focus">${esc(ev.title)}</span>`).join("")}${tasks.slice(0,2).map(t=>`<span class="event ${t.priority}">${esc(t.title)}</span>`).join("")}</button>`}$("monthTitle").textContent=month.toLocaleDateString("th-TH",{month:"long",year:"numeric"});$("monthGrid").innerHTML=html}
+    function noteColor(n){let colors=["c-blue","c-violet","c-yellow","c-pink","c-orange","c-lime"],sum=String(n.id||n.title||"").split("").reduce((a,c)=>a+c.charCodeAt(0),0);return colors[sum%colors.length]}
+    function noteCard(n){return `<article class="card note ${noteColor(n)} ${n.pinned?"pinned":""}"><div class="note-head"><h4>${esc(n.title)}</h4>${n.pinned?`<span class="pin">★</span>`:""}</div><div class="content">${clean(n.body)}</div><div class="actions"><button class="mini" title="${n.pinned?"ถอนหมุด":"ปักหมุด"}" aria-label="${n.pinned?"ถอนหมุด":"ปักหมุด"}" data-pin-note="${n.id}">${n.pinned?"★":"☆"}</button><button class="mini" title="แก้ไข" aria-label="แก้ไข" data-edit-note="${n.id}">✎</button><button class="mini" title="ลบ" aria-label="ลบ" data-del-note="${n.id}">×</button></div></article>`}
+    function renderNotes(){let q=$("noteSearch").value.toLowerCase(),gd=globalDate();let arr=state.notes.filter(n=>itemInDate(n,gd)&&(n.title+" "+strip(n.body)).toLowerCase().includes(q)).sort((a,b)=>(b.pinned-a.pinned)||b.updated.localeCompare(a.updated));$("noteList").innerHTML=arr.map(noteCard).join("")||`<p class="muted">ยังไม่มีโน้ต</p>`}
+    function diaryCard(d){return `<article class="card diary-card"><span class="diary-date">${new Date(d.date+"T00:00:00").toLocaleDateString("th-TH",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}</span><h4>${esc(d.title)}</h4><div class="content">${clean(d.body)}</div><div class="actions" style="margin-top:12px"><button class="mini" data-edit-diary="${d.id}">แก้ไข</button><button class="mini" data-del-diary="${d.id}">ลบ</button></div></article>`}
+    function renderDiary(){if(!$("diaryList"))return;state.diaries=state.diaries||[];let q=($("diarySearch")?.value||"").toLowerCase(),fd=$("diaryFilterDate")?.value||"",gd=globalDate();let arr=state.diaries.filter(d=>(!gd||d.date===gd)&&(!fd||d.date===fd)&&(`${d.title} ${strip(d.body)}`.toLowerCase().includes(q))).sort((a,b)=>(b.date||"").localeCompare(a.date||"")||b.updated.localeCompare(a.updated));$("diaryList").innerHTML=arr.map(diaryCard).join("")||`<p class="muted">ยังไม่มีไดอารี่</p>`}
+    function csvCell(v){return `"${String(v??"").replaceAll('"','""')}"`}
+    function exportMonthlyTasks(){let base=$("calendarDate")?.value?new Date($("calendarDate").value+"T00:00:00"):new Date(),y=base.getFullYear(),m=base.getMonth();let rows=[["ชื่องาน","หมวดหมู่","ความสำคัญ","สเต็ปงาน","วันที่แจ้งเตือน","แจ้งซ้ำ","กำหนดส่ง","ลิงก์ 1","ลิงก์ 2","ลิงก์ 3","รายละเอียด"]];state.tasks.filter(t=>{let d=t.due||t.alertAt||t.created;if(!d)return false;let dt=new Date(d);return dt.getFullYear()===y&&dt.getMonth()===m}).sort(taskSort).forEach(t=>rows.push([t.title,t.category||"อื่นๆ",label[t.priority]||"ทั่วไป",statusText(taskStatus(t)),t.alertAt?new Date(t.alertAt).toLocaleString("th-TH"):"",repeatText(t.repeat),t.due?new Date(t.due).toLocaleString("th-TH"):"",t.link1||"",t.link2||"",t.link3||"",t.detail||""]));let csv="\ufeff"+rows.map(r=>r.map(csvCell).join(",")).join("\r\n"),blob=new Blob([csv],{type:"text/csv;charset=utf-8"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`ตารางงาน-${y}-${String(m+1).padStart(2,"0")}.csv`;a.click();URL.revokeObjectURL(a.href)}
+    function emailPriority(text){if(/ด่วน|เร่ง|สำคัญมาก|วันนี้|ภายในวันนี้|urgent|asap|today/i.test(text))return"urgent";if(/ติดตาม|นัด|ยืนยัน|อนุมัติ|ตอบกลับ|reply|confirm|approve|follow/i.test(text))return"focus";if(/ตรวจ|เช็ค|ส่ง|review|check|send/i.test(text))return"important";return"general"}
+    function needsReply(text){return /ตอบกลับ|แจ้งกลับ|ยืนยัน|ขอคำตอบ|reply|respond|confirm|feedback/i.test(text)}
+    function emailRow(m){return `<button class="email-row ${m.id===selectedEmailId?"active":""}" data-open-email="${m.id}"><h4>${esc(m.subject||"ไม่มีหัวข้อ")}</h4><p>${esc(m.from||"-")}</p><p>${new Date(m.created).toLocaleString("th-TH")} · P${rank[m.priority||"general"]} ${label[m.priority||"general"]}</p></button>`}
+    function highlightEmail(text){let safe=esc(text||"");return safe.replace(/(ด่วน|เร่ง|สำคัญมาก|ภายในวันนี้|12 JUNE 2026|12 มิถุนายน 2026|Submit proposal|รบกวน|ตอบกลับ|ยืนยัน|อนุมัติ|ส่ง|ตรวจ|เช็ค|ติดตาม|urgent|asap|today|reply|confirm|approve|send|review|check|follow)/gi,"<mark>$1</mark>")}
+    function emailDetail(m){if(!m)return`<div class="muted">เลือกอีเมลทางซ้ายเพื่อดูสรุปและสร้างงาน</div>`;return `<h3>${esc(m.subject||"ไม่มีหัวข้อ")}</h3><div class="email-meta"><span>${esc(m.account)}</span><span>จาก: ${esc(m.from||"-")}</span><span>${new Date(m.created).toLocaleString("th-TH")}</span></div><div class="summary-grid"><div class="summary-box"><span>ความสำคัญ</span><strong>P${rank[m.priority||"general"]} ${label[m.priority||"general"]}</strong></div><div class="summary-box"><span>ต้องตอบกลับ</span><strong>${m.replyNeeded?"จำเป็น":"ไม่จำเป็น"}</strong></div><div class="summary-box"><span>สิ่งที่ต้องทำ</span><strong>${(m.todos||[]).length} รายการ</strong></div></div><h4>สรุปอีเมล</h4><p class="muted">${esc(m.summary)}</p><div class="panel" style="box-shadow:none;margin:10px 0;background:#f8fafc"><h4>ตั้งค่างานที่จะสร้าง</h4><div class="toolbar" style="margin-top:10px"><select id="emailTaskPriority"><option value="urgent">ด่วนมาก</option><option value="important">สำคัญ</option><option value="general">ทั่วไป</option><option value="longterm">ระยะยาว</option></select><input id="emailTaskDue" type="datetime-local"><button class="btn primary" data-email-task="${m.id}" data-todo-index="all">สร้างงานจากอีเมลนี้</button></div></div><h4>สิ่งที่ต้องทำต่อ</h4><div class="todo-list">${(m.todos||[]).map((todo,i)=>`<div class="todo-item"><span>${esc(todo)}</span><button class="mini" data-email-task="${m.id}" data-todo-index="${i}">สร้างงาน</button></div>`).join("")||`<p class="muted">ไม่พบสิ่งที่ต้องทำชัดเจน</p>`}</div><div class="actions" style="margin-top:12px"><button class="btn ghost" data-del-email="${m.id}">ลบอีเมลนี้</button></div><h4 style="margin-top:14px">เนื้อหาอีเมลพร้อมไฮไลต์</h4><div class="email-body">${highlightEmail(m.body||"")}</div>`}
+    function createTasksFromEmail(m,todos){let prio=$("emailTaskPriority")?.value||m.priority||"important",due=$("emailTaskDue")?.value||"";todos.forEach(todo=>state.tasks.unshift({id:id(),title:todo,category:"งานประสานงาน",priority:prio==="focus"?"important":prio,status:"not_started",due,alertAt:"",repeat:"none",reminder:15,link1:"",link2:"",link3:"",detail:`จากอีเมล: ${m.subject||"-"}\nบัญชี: ${m.account}\nผู้ส่ง: ${m.from||"-"}\nต้องตอบกลับ: ${m.replyNeeded?"ใช่":"ไม่"}\n\nสรุป: ${m.summary||"-"}`,created:new Date().toISOString(),updated:new Date().toISOString()}));save();render();toast(`สร้างงาน ${todos.length} รายการแล้ว`)}
+    function renderEmails(){if(!$("emailSummaryList"))return;let gd=globalDate(),arr=(state.emailSummaries||[]).filter(m=>itemInDate(m,gd)).slice().sort((a,b)=>b.created.localeCompare(a.created));if(arr.length&&!selectedEmailId)selectedEmailId=arr[0].id;if(!arr.find(x=>x.id===selectedEmailId))selectedEmailId=arr[0]?.id||null;$("emailSummaryList").innerHTML=arr.length?arr.map(emailRow).join(""):`<p class="muted">ยังไม่มีอีเมล</p>`;$("emailDetail").innerHTML=emailDetail(arr.find(x=>x.id===selectedEmailId))}
+    function summarizeEmailText(text){let lines=text.split(/\n+/).map(x=>x.trim()).filter(Boolean), cleanLines=lines.filter(x=>!/^>/.test(x)&&!/^(from|sent|to|subject):/i.test(x));let body=cleanLines.join(" ").replace(/\s+/g," ").trim();let summary=body.split(/(?<=[.!?。])\s+|[ๆ]?[\r\n]+/).filter(Boolean).slice(0,3).join(" ");if(!summary)summary=body.slice(0,220)||"ไม่มีเนื้อหา";let todoWords=/ต้อง|ช่วย|ขอ|รบกวน|ส่ง|ตรวจ|เช็ค|นัด|ยืนยัน|อนุมัติ|ติดตาม|แก้ไข|ดำเนินการ|ตอบกลับ|reply|confirm|send|review|check|follow|approve|fix|todo|action/i;let todos=cleanLines.filter(x=>todoWords.test(x)).slice(0,8);if(!todos.length&&body)todos=[`ตรวจสอบอีเมล: ${body.slice(0,90)}`];return{summary,todos,priority:emailPriority(body),replyNeeded:needsReply(body)}}
+    function getGmailAccount(){let selected=$("gmailAccount")?.value||"";return selected==="custom"?($("customGmailAccount")?.value||"").trim().toLowerCase():selected}
+    function syncGmailEndpointField(){if(!$("gmailEndpoint"))return;let custom=$("gmailAccount").value==="custom";$("customGmailAccount").classList.toggle("hidden",!custom);let account=getGmailAccount();$("gmailEndpoint").value=account?((state.gmailEndpoints||{})[account]||""):"";$("autoGmailFetch").checked=!!state.gmailAuto;$("gmailInterval").value=state.gmailInterval||15}
+    function enableGmailAutoIfReady(){let hasEndpoint=Object.keys(state.gmailEndpoints||{}).some(a=>state.gmailEndpoints[a]);if(hasEndpoint&&!state.gmailAuto){state.gmailAuto=true;save()}}
+    async function fetchGmailSummaries(accountOverride){let account=accountOverride||getGmailAccount(),endpoint=(state.gmailEndpoints||{})[account];if(!account){toast("กรุณาเลือกหรือพิมพ์บัญชี Gmail ก่อน");return[]}if(!endpoint){if(!accountOverride)toast("กรุณาวางและบันทึกลิงก์ Google Apps Script ของบัญชีนี้ก่อน");return[]}try{if(!accountOverride)$("fetchGmailBtn").textContent="กำลังดึง...";let res=await fetch(endpoint+(endpoint.includes("?")?"&":"?")+"limit=10");let data=await res.json();if(!data.ok)throw new Error(data.error||"not ok");state.gmailSeen=state.gmailSeen||{};let items=(data.emails||[]).filter(mail=>{let key=account+"|"+(mail.id||mail.subject||"")+"|"+(mail.date||"")+"|"+(mail.from||"");if(state.gmailSeen[key])return false;state.gmailSeen[key]=true;return true}).map(mail=>{let s=summarizeEmailText(mail.body||"");return{id:id(),sourceId:mail.id||"",account:account,from:mail.from||"",subject:mail.subject||"",body:mail.body||"",summary:mail.summary||s.summary,todos:mail.todos&&mail.todos.length?mail.todos:s.todos,priority:mail.priority||s.priority,replyNeeded:"replyNeeded"in mail?mail.replyNeeded:s.replyNeeded,created:new Date(mail.date||Date.now()).toISOString()}});if(items.length){state.emailSummaries=[...items,...(state.emailSummaries||[])];selectedEmailId=items[0].id;save();renderEmails();notifyImportantEmails(items)}if(!accountOverride)toast(`ดึงอีเมลใหม่ ${items.length} รายการแล้ว`);return items}catch(err){if(!accountOverride)toast("ดึง Gmail ไม่สำเร็จ: ตรวจว่าใช้ลิงก์ /exec, Deploy เป็น Web app และอนุญาต Gmail แล้ว");return[]}finally{if(!accountOverride)$("fetchGmailBtn").textContent="ดึงอีเมลล่าสุด"}}
+    async function fetchAllGmailAuto(){let accounts=Object.keys(state.gmailEndpoints||{}).filter(a=>state.gmailEndpoints[a]);let total=0;for(let account of accounts){let items=await fetchGmailSummaries(account);total+=items.length}if(total)toast(`ดึงและสรุปอีเมลใหม่ ${total} รายการแล้ว`)}
+    function startGmailAuto(){if(gmailTimer)clearInterval(gmailTimer);enableGmailAutoIfReady();syncGmailEndpointField();if(!state.gmailAuto)return;fetchAllGmailAuto();gmailTimer=setInterval(fetchAllGmailAuto,Math.max(5,Number(state.gmailInterval||15))*60000)}
+    function resetTask(){$("taskForm").reset();$("taskId").value="";$("taskCategory").value="อื่นๆ";$("taskPriority").value="general";$("taskStatus").value="not_started";$("taskRepeat").value="none";$("taskReminder").value="1440";$("saveTask").textContent="บันทึกงาน";$("cancelTask").classList.add("hidden")}
+    function resetEvent(){$("eventForm").reset();$("eventId").value="";$("saveEvent").textContent="บันทึกนัดหมาย";$("cancelEvent").classList.add("hidden")}
+    function resetNote(){$("noteForm").reset();$("noteId").value="";$("noteEditor").innerHTML="";$("notePinned").checked=false;$("saveNote").textContent="บันทึกโน้ต";$("cancelNote").classList.add("hidden")}
+    function resetDiary(){$("diaryForm").reset();$("diaryId").value="";$("diaryDate").value=today();$("diaryEditor").innerHTML="";$("saveDiary").textContent="บันทึกไดอารี่";$("cancelDiary").classList.add("hidden");$("diaryImageControls").classList.add("hidden");selectedDiaryImage=null}
+    function canNotify(){return "Notification"in window&&Notification.permission==="granted"}
+    function linePayloadForTask(t,title){return{title:title||t.title,priority:label[t.priority]||"ทั่วไป",dueAt:t.due?new Date(t.due).toLocaleString("th-TH"):"ไม่มีกำหนด",detail:t.category||""}}
+    function sendLine(payload){let url=(state.lineWebhook||"").trim();if(!url)return Promise.resolve(false);return new Promise(resolve=>{try{let img=new Image();let done=false;let finish=ok=>{if(done)return;done=true;resolve(ok)};img.onload=()=>finish(true);img.onerror=()=>finish(true);img.src=url+(url.includes("?")?"&":"?")+"payload="+encodeURIComponent(JSON.stringify(payload))+"&t="+Date.now();setTimeout(()=>finish(true),1800)}catch{resolve(false)}})}
+    function lineSummaryPayload(){let tasks=state.tasks.filter(t=>!isEmailTask(t)&&isOpenTask(t)).sort(taskSort).map(t=>({title:t.title,priority:label[t.priority]||"ทั่วไป",dueAt:t.due?new Date(t.due).toLocaleString("th-TH"):""}));return{type:"summary",title:"ภาพรวมงานและงานค้าง",date:new Date().toLocaleDateString("th-TH"),tasks}}
+    function notifyOnce(key,title,payload){state.notificationSeen=state.notificationSeen||{};if(state.notificationSeen[key])return false;let sent=false;if(canNotify()){new Notification(title);sent=true}if(state.lineWebhook){sendLine(payload||{title});sent=true}if(sent){state.notificationSeen[key]=new Date().toISOString();return true}return false}
+    function collectNotifications(){let now=Date.now(),items=[];state.tasks.filter(t=>!isEmailTask(t)).forEach(t=>{let s=taskStatus(t);if(s==="closed")return;if(t.priority==="urgent"&&s!=="done")items.push({key:"urgent-task-"+t.id,title:t.title,type:"งานด่วน",payload:linePayloadForTask(t)});if(t.alertAt&&s!=="done"&&repeatReady(t,now))items.push({key:"alert-task-"+t.id+"-"+today(new Date(now)),title:t.title,type:"ถึงเวลาแจ้งเตือน",payload:linePayloadForTask(t)});if(t.due){let due=new Date(t.due).getTime(),rem=Number(t.reminder||60),warnAt=due-rem*60000,dayBefore=due-1440*60000;if(s!=="done"&&now>=dayBefore&&now<due)items.push({key:"due-1day-task-"+t.id,title:t.title,type:"ใกล้ถึงกำหนดส่ง 1 วัน",payload:linePayloadForTask(t)});if(s!=="done"&&now>=warnAt&&now<due)items.push({key:"due-soon-task-"+t.id,title:t.title,type:"ใกล้ถึงกำหนดส่ง",payload:linePayloadForTask(t)});if(now>=due&&now<=due+86400000){let done=s==="done",title=done?"ยินดีด้วยคุณทำงานเสร็จก่อนเวลา":"คุณต้องพัฒนาตัวให้มากนะ งานคุณยังไม่เสร็จ";items.push({key:"due-result-"+t.id+"-"+today(new Date(due)),title,type:"ครบกำหนดส่ง",payload:linePayloadForTask(t,title)})}}});(state.emailSummaries||[]).filter(m=>m.priority==="urgent"||m.priority==="focus").forEach(m=>items.push({key:"email-"+(m.sourceId||m.id),title:m.subject||"อีเมลสำคัญ",type:"อีเมลสำคัญ",payload:{title:m.subject||"อีเมลสำคัญ",priority:label[m.priority]||"สำคัญ",dueAt:"",detail:"อีเมลสำคัญ"}}));state.notificationSeen=state.notificationSeen||{};return items.filter(x=>!state.notificationSeen[x.key])}
+    function updateNotificationBadge(){let items=collectNotifications();if(!$("notifyBadge"))return;$("notifyBadge").textContent=items.length;$("notifyBadge").classList.toggle("hidden",!items.length)}
+    function renderNotificationPanel(){let items=collectNotifications();$("notifyList").innerHTML=items.length?items.map(x=>`<article class="notify-item"><div><h4>${esc(x.title)}</h4><p>${esc(x.type)}</p></div><button class="mini" data-dismiss-notify="${esc(x.key)}">อ่านแล้ว</button></article>`).join(""):`<p class="muted">ยังไม่มีรายการแจ้งเตือน</p>`;$("notifyPanel").classList.toggle("hidden",false)}
+    function sendPendingNotifications(){let items=collectNotifications(),changed=false;if(!items.length){toast("ยังไม่มีรายการแจ้งเตือน");return}items.forEach(x=>{changed=notifyOnce(x.key,x.title,x.payload)||changed});if(changed){save();toast("ส่งแจ้งเตือนแล้ว")}else toast(state.lineWebhook?"ส่ง LINE แล้ว หรือรายการนี้เคยแจ้งแล้ว":"กรุณาอนุญาตแจ้งเตือน หรือใส่ LINE webhook ก่อน");updateNotificationBadge()}
+    function notifyImportantEmails(items){let changed=false;(items||[]).filter(m=>m.priority==="urgent"||m.priority==="focus").forEach(m=>{changed=notifyOnce("email-"+(m.sourceId||m.id),m.subject||"อีเมลสำคัญ",{title:m.subject||"อีเมลสำคัญ",priority:label[m.priority]||"สำคัญ",dueAt:"",detail:"อีเมลสำคัญ"})||changed});if(changed)save()}
+    function repeatReady(t,now){let at=new Date(t.alertAt).getTime(),dt=new Date(t.alertAt),n=new Date(now),near=n.getHours()===dt.getHours()&&n.getMinutes()===dt.getMinutes();if(!near||now<at)return false;if(t.repeat==="daily")return true;if(t.repeat==="weekly")return n.getDay()===dt.getDay();if(t.repeat==="monthly")return n.getDate()===dt.getDate();return now>=at&&now<=at+300000}
+    function dailyLineReady(now){let n=new Date(now);return n.getHours()===8&&n.getMinutes()>=30&&n.getMinutes()<=34}
+    function sendDailyLineSummary(){let key="daily-line-summary-"+today();if(!state.lineWebhook||state.notificationSeen?.[key])return false;sendLine(lineSummaryPayload());state.notificationSeen=state.notificationSeen||{};state.notificationSeen[key]=new Date().toISOString();return true}
+    function checkReminders(){let now=Date.now(),changed=false;if(dailyLineReady(now))changed=sendDailyLineSummary()||changed;state.tasks.forEach(t=>{let s=taskStatus(t);if(s==="closed")return;if(t.priority==="urgent"&&s!=="done")changed=notifyOnce("urgent-task-"+t.id,t.title,linePayloadForTask(t))||changed;if(t.alertAt&&s!=="done"&&repeatReady(t,now))changed=notifyOnce("alert-task-"+t.id+"-"+today(new Date(now)),t.title,linePayloadForTask(t))||changed;if(!t.due)return;let due=new Date(t.due).getTime(),rem=Number(t.reminder||60),warnAt=due-rem*60000,dayBefore=due-1440*60000;if(s!=="done"&&now>=dayBefore&&now<due)changed=notifyOnce("due-1day-task-"+t.id,t.title,linePayloadForTask(t))||changed;if(s!=="done"&&now>=warnAt&&now<due)changed=notifyOnce("due-soon-task-"+t.id,t.title,linePayloadForTask(t))||changed;if(now>=due&&now<=due+86400000){let key="due-result-"+t.id+"-"+today(new Date(due));if(s==="done")changed=notifyOnce(key,"ยินดีด้วยคุณทำงานเสร็จก่อนเวลา",linePayloadForTask(t,"ยินดีด้วยคุณทำงานเสร็จก่อนเวลา"))||changed;else changed=notifyOnce(key,"คุณต้องพัฒนาตัวให้มากนะ งานคุณยังไม่เสร็จ",linePayloadForTask(t,"คุณต้องพัฒนาตัวให้มากนะ งานคุณยังไม่เสร็จ"))||changed}});notifyImportantEmails(state.emailSummaries||[]);if(changed)save()}
+    $("enterBtn").onclick=signInGoogle;$("localEnterBtn").onclick=()=>{state.user={name:"กาย",local:true};saveLocal();showApp()};$("logoutBtn").onclick=()=>cloud.user?signOutGoogle():($("app").classList.add("hidden"),$("login").classList.remove("hidden"));$("menuBtn").onclick=()=>$("side").classList.toggle("open");$("notifyBtn").onclick=()=>{renderNotificationPanel();if("Notification"in window)Notification.requestPermission().then(()=>sendPendingNotifications());else sendPendingNotifications()};$("closeNotifyPanel").onclick=()=>$("notifyPanel").classList.add("hidden");
+    document.querySelectorAll(".nav").forEach(b=>b.onclick=()=>switchView(b.dataset.view));document.querySelectorAll("[data-jump]").forEach(b=>b.onclick=()=>switchView(b.dataset.jump));
+    $("taskForm").onsubmit=e=>{e.preventDefault();let old=state.tasks.find(t=>t.id===$("taskId").value),due=$("taskDue").value,rem=Number($("taskReminder").value),alertAt=$("taskAlertAt").value,status=$("taskStatus").value;let t={id:old?.id||id(),title:$("taskTitle").value,category:$("taskCategory").value,priority:$("taskPriority").value,status,due,alertAt,repeat:$("taskRepeat").value,reminder:rem,link1:$("taskLink1").value.trim(),link2:$("taskLink2").value.trim(),link3:$("taskLink3").value.trim(),detail:$("taskDetail").value,created:old?.created||new Date().toISOString(),updated:new Date().toISOString(),source:old?.source,sourceEmailId:old?.sourceEmailId,history:old?.history||[]};saveTaskWithHistory(old,t,old?"อัปเดตจากหน้าสร้างงาน":"สร้างงานใหม่");resetTask();save();render();toast("บันทึกงานแล้ว")};
+    $("taskModalForm").onsubmit=e=>{e.preventDefault();let old=state.tasks.find(t=>t.id===$("modalTaskId").value);if(!old)return;let t=taskFromModal(old);saveTaskWithHistory(old,t,$("modalTaskUpdateNote").value);save();render();fillModalTask(t);toast("บันทึกการอัปเดตแล้ว")};
+    $("closeTaskModal").onclick=closeTaskModal;$("cancelTaskModal").onclick=closeTaskModal;$("taskModal").addEventListener("click",e=>{if(e.target.id==="taskModal")closeTaskModal()});
+    document.body.addEventListener("click",e=>{let edit=e.target.closest("[data-edit-task]");if(edit){e.stopImmediatePropagation();openTaskModal(edit.dataset.editTask);return}let card=e.target.closest("[data-open-task]");if(card&&!e.target.closest("button,a,input,select,textarea")){e.stopImmediatePropagation();openTaskModal(card.dataset.openTask);return}let toggle=e.target.closest("[data-toggle-task]");if(toggle){e.stopImmediatePropagation();let old=state.tasks.find(t=>t.id===toggle.dataset.toggleTask);if(old){let next={...old,status:taskStatus(old)==="done"?"not_started":"done"};saveTaskWithHistory(old,next,taskStatus(next)==="done"?"อัปเดตงานเป็นเสร็จแล้ว":"เปิดงานกลับมาทำต่อ");save();render()}return}let close=e.target.closest("[data-close-task]");if(close){e.stopImmediatePropagation();let old=state.tasks.find(t=>t.id===close.dataset.closeTask);if(old){let next={...old,status:taskStatus(old)==="closed"?"not_started":"closed"};saveTaskWithHistory(old,next,taskStatus(next)==="closed"?"ปิดงานแล้ว":"เปิดงานกลับมาอีกครั้ง");save();render()}}},true);
+    $("eventForm").onsubmit=e=>{e.preventDefault();let old=(state.events||[]).find(ev=>ev.id===$("eventId").value),ev={id:old?.id||id(),title:$("eventTitle").value,start:$("eventStart").value,end:$("eventEnd").value,location:$("eventLocation").value,detail:$("eventDetail").value,created:old?.created||new Date().toISOString(),updated:new Date().toISOString()};state.events=old?state.events.map(x=>x.id===old.id?ev:x):[ev,...(state.events||[])];resetEvent();save();renderCalendar();toast("บันทึกนัดหมายแล้ว")};
+    $("noteForm").onsubmit=e=>{e.preventDefault();let old=state.notes.find(n=>n.id===$("noteId").value),n={id:old?.id||id(),title:$("noteTitle").value,body:clean($("noteEditor").innerHTML),pinned:$("notePinned").checked,created:old?.created||new Date().toISOString(),updated:new Date().toISOString()};state.notes=old?state.notes.map(x=>x.id===old.id?n:x):[n,...state.notes];resetNote();save();render();toast("บันทึกโน้ตแล้ว")};
+    $("diaryForm").onsubmit=e=>{e.preventDefault();state.diaries=state.diaries||[];let old=state.diaries.find(d=>d.id===$("diaryId").value),d={id:old?.id||id(),date:$("diaryDate").value||today(),title:$("diaryTitle").value,body:clean($("diaryEditor").innerHTML),created:old?.created||new Date().toISOString(),updated:new Date().toISOString()};state.diaries=old?state.diaries.map(x=>x.id===old.id?d:x):[d,...state.diaries];resetDiary();save();renderDiary();toast("บันทึกไดอารี่แล้ว")};
+    $("emailForm").onsubmit=e=>{e.preventDefault();let result=summarizeEmailText($("emailBody").value),item={id:id(),account:$("emailAccount").value,from:$("emailFrom").value,subject:$("emailSubject").value,body:$("emailBody").value,summary:result.summary,todos:result.todos,priority:result.priority,replyNeeded:result.replyNeeded,created:new Date().toISOString()};state.emailSummaries=[item,...(state.emailSummaries||[])];selectedEmailId=item.id;save();renderEmails();toast("สรุปอีเมลแล้ว")};
+    ["taskSearch","priorityFilter","statusFilter"].forEach(x=>$(x).oninput=renderTasks);$("noteSearch").oninput=renderNotes;$("diarySearch").oninput=renderDiary;$("diaryFilterDate").onchange=renderDiary;$("clearDiaryFilter").onclick=()=>{$("diaryFilterDate").value="";renderDiary()};$("calendarDate").onchange=renderCalendar;$("prevMonth").onclick=()=>{month=new Date(month.getFullYear(),month.getMonth()-1,1);renderCalendar()};$("nextMonth").onclick=()=>{month=new Date(month.getFullYear(),month.getMonth()+1,1);renderCalendar()};$("cancelTask").onclick=resetTask;$("cancelEvent").onclick=resetEvent;$("cancelNote").onclick=resetNote;$("cancelDiary").onclick=resetDiary;$("exportMonthBtn").onclick=exportMonthlyTasks;$("clearEmailForm").onclick=()=>$("emailForm").reset();$("clearEmailSummaries").onclick=()=>{if(confirm("ล้างรายการสรุปอีเมลทั้งหมด?")){state.emailSummaries=[];save();renderEmails()}};$("gmailAccount").onchange=syncGmailEndpointField;$("customGmailAccount").oninput=syncGmailEndpointField;$("saveGmailEndpoint").onclick=()=>{let account=getGmailAccount();if(!account){toast("กรุณาพิมพ์บัญชี Gmail ก่อน");return}state.gmailEndpoints=state.gmailEndpoints||{};state.gmailEndpoints[account]=$("gmailEndpoint").value.trim();save();startGmailAuto();toast("บันทึกลิงก์ Gmail แล้ว")};$("fetchGmailBtn").onclick=()=>fetchGmailSummaries();$("autoGmailFetch").onchange=()=>{state.gmailAuto=$("autoGmailFetch").checked;save();startGmailAuto();toast(state.gmailAuto?"เปิดดึงอีเมลอัตโนมัติแล้ว":"ปิดดึงอีเมลอัตโนมัติแล้ว")};$("gmailInterval").onchange=()=>{state.gmailInterval=Math.max(5,Number($("gmailInterval").value||15));save();startGmailAuto();toast("บันทึกรอบเวลาดึงอีเมลแล้ว")};
+    $("globalDateFilter").onchange=()=>{let gd=globalDate();if(gd){$("calendarDate").value=gd;$("diaryFilterDate").value=gd}render()};$("clearGlobalDate").onclick=()=>{$("globalDateFilter").value="";$("diaryFilterDate").value="";render()};
+    document.body.addEventListener("click",e=>{let dismissBtn=e.target.closest("[data-dismiss-notify]");if(dismissBtn){e.stopImmediatePropagation();state.notificationSeen=state.notificationSeen||{};state.notificationSeen[dismissBtn.dataset.dismissNotify]=new Date().toISOString();save();renderNotificationPanel();updateNotificationBadge();return}let editTaskBtn=e.target.closest("[data-edit-task]");if(editTaskBtn){e.stopImmediatePropagation();let t=state.tasks.find(x=>x.id===editTaskBtn.dataset.editTask);if(t){switchView("tasks");$("taskId").value=t.id;$("taskTitle").value=t.title;$("taskCategory").value=t.category||"อื่นๆ";$("taskPriority").value=t.priority||"general";$("taskStatus").value=taskStatus(t);$("taskAlertAt").value=t.alertAt||"";$("taskRepeat").value=t.repeat||"none";$("taskDue").value=t.due||"";$("taskReminder").value=String(t.reminder||15);$("taskLink1").value=t.link1||"";$("taskLink2").value=t.link2||"";$("taskLink3").value=t.link3||"";$("taskDetail").value=t.detail||"";$("saveTask").textContent="บันทึกการแก้ไข";$("cancelTask").classList.remove("hidden")}return}let toggleTaskBtn=e.target.closest("[data-toggle-task]");if(toggleTaskBtn){e.stopImmediatePropagation();let tid=toggleTaskBtn.dataset.toggleTask;state.tasks=state.tasks.map(t=>t.id===tid?{...t,status:taskStatus(t)==="done"?"not_started":"done",updated:new Date().toISOString()}:t);save();render();return}let closeTaskBtn=e.target.closest("[data-close-task]");if(closeTaskBtn){e.stopImmediatePropagation();let tid=closeTaskBtn.dataset.closeTask;state.tasks=state.tasks.map(t=>t.id===tid?{...t,status:taskStatus(t)==="closed"?"not_started":"closed",updated:new Date().toISOString()}:t);save();render()}},true);
+    document.body.onclick=e=>{let img=e.target.closest(".editor img");if(img){if(img.closest("#diaryEditor")){selectedDiaryImage=img;$("diaryImageControls").classList.remove("hidden")}else{selectedImage=img;$("imageControls").classList.remove("hidden")}}let createBtn=e.target.closest("[data-email-task]");if(createBtn){let m=state.emailSummaries.find(x=>x.id===createBtn.dataset.emailTask);if(m){let idx=createBtn.dataset.todoIndex,todos=idx==="all"?(m.todos&&m.todos.length?m.todos:[`ตรวจสอบ/ตอบกลับอีเมล: ${m.subject||"ไม่มีหัวข้อ"}`]):[m.todos[Number(idx)]].filter(Boolean);createTasksFromEmail(m,todos)}return}let d=e.target.closest("[data-day]")?.dataset.day;if(d){$("calendarDate").value=d;month=new Date(d+"T00:00:00");renderCalendar()}let openEmail=e.target.closest("[data-open-email]")?.dataset.openEmail;if(openEmail){selectedEmailId=openEmail;renderEmails()}let emailId=e.target.dataset.delEmail;if(emailId&&confirm("ลบอีเมลนี้?")){state.emailSummaries=(state.emailSummaries||[]).filter(x=>x.id!==emailId);selectedEmailId=null;save();renderEmails()}let evId=e.target.dataset.editEvent;if(evId){let ev=(state.events||[]).find(x=>x.id===evId);if(ev){switchView("calendar");$("eventId").value=ev.id;$("eventTitle").value=ev.title;$("eventStart").value=ev.start;$("eventEnd").value=ev.end||"";$("eventLocation").value=ev.location||"";$("eventDetail").value=ev.detail||"";$("saveEvent").textContent="บันทึกการแก้ไข";$("cancelEvent").classList.remove("hidden")}}evId=e.target.dataset.delEvent;if(evId&&confirm("ลบนัดหมายนี้?")){state.events=(state.events||[]).filter(ev=>ev.id!==evId);save();renderCalendar()}let tid=e.target.dataset.editTask;if(tid){let t=state.tasks.find(x=>x.id===tid);switchView("tasks");$("taskId").value=t.id;$("taskTitle").value=t.title;$("taskPriority").value=t.priority;$("taskDue").value=t.due||"";$("taskReminder").value=String(t.reminder||15);$("taskDetail").value=t.detail||"";$("saveTask").textContent="บันทึกการแก้ไข";$("cancelTask").classList.remove("hidden")}tid=e.target.dataset.toggleTask;if(tid){state.tasks=state.tasks.map(t=>t.id===tid?{...t,status:t.status==="done"?"open":"done"}:t);save();render()}tid=e.target.dataset.closeTask;if(tid){state.tasks=state.tasks.map(t=>t.id===tid?{...t,status:t.status==="closed"?"open":"closed"}:t);save();render()}tid=e.target.dataset.delTask;if(tid&&confirm("ลบงานนี้?")){state.tasks=state.tasks.filter(t=>t.id!==tid);save();render()}let nid=e.target.dataset.pinNote;if(nid){state.notes=state.notes.map(n=>n.id===nid?{...n,pinned:!n.pinned,updated:new Date().toISOString()}:n);save();render()}nid=e.target.dataset.editNote;if(nid){let n=state.notes.find(x=>x.id===nid);switchView("notes");$("noteId").value=n.id;$("noteTitle").value=n.title;$("noteEditor").innerHTML=clean(n.body);$("notePinned").checked=!!n.pinned;$("saveNote").textContent="บันทึกการแก้ไข";$("cancelNote").classList.remove("hidden")}nid=e.target.dataset.delNote;if(nid&&confirm("ลบโน้ตนี้?")){state.notes=state.notes.filter(n=>n.id!==nid);save();render()}let did=e.target.dataset.editDiary;if(did){let d=(state.diaries||[]).find(x=>x.id===did);if(d){switchView("diary");$("diaryId").value=d.id;$("diaryDate").value=d.date||today();$("diaryTitle").value=d.title;$("diaryEditor").innerHTML=clean(d.body);$("saveDiary").textContent="บันทึกการแก้ไข";$("cancelDiary").classList.remove("hidden")}}did=e.target.dataset.delDiary;if(did&&confirm("ลบไดอารี่วันนี้?")){state.diaries=(state.diaries||[]).filter(d=>d.id!==did);save();renderDiary()}};
+    document.querySelectorAll("[data-format]").forEach(b=>b.onclick=()=>{noteEditor.focus();if(b.dataset.format==="bold")document.execCommand("bold");if(b.dataset.format==="italic")document.execCommand("italic");if(b.dataset.format==="hilite")document.execCommand("backColor",false,"#fff3b0")});document.querySelectorAll("[data-emoji]").forEach(b=>b.onclick=()=>{noteEditor.focus();document.execCommand("insertHTML",false,b.dataset.emoji)});document.querySelectorAll("[data-img-size]").forEach(b=>b.onclick=()=>{if(!selectedImage)return;selectedImage.classList.remove("img-small","img-medium","img-large");selectedImage.classList.add("img-"+b.dataset.imgSize);noteEditor.focus()});$("noteImage").onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{noteEditor.focus();document.execCommand("insertHTML",false,`<img class="img-medium" src="${r.result}">`);e.target.value=""};r.readAsDataURL(f)};
+    document.querySelectorAll("[data-diary-format]").forEach(b=>b.onclick=()=>{diaryEditor.focus();if(b.dataset.diaryFormat==="bold")document.execCommand("bold");if(b.dataset.diaryFormat==="italic")document.execCommand("italic");if(b.dataset.diaryFormat==="hilite")document.execCommand("backColor",false,"#fff3b0")});document.querySelectorAll("[data-diary-emoji]").forEach(b=>b.onclick=()=>{diaryEditor.focus();document.execCommand("insertHTML",false,b.dataset.diaryEmoji)});document.querySelectorAll("[data-diary-img-size]").forEach(b=>b.onclick=()=>{if(!selectedDiaryImage)return;selectedDiaryImage.classList.remove("img-small","img-medium","img-large");selectedDiaryImage.classList.add("img-"+b.dataset.diaryImgSize);diaryEditor.focus()});$("diaryImage").onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{diaryEditor.focus();document.execCommand("insertHTML",false,`<img class="img-medium" src="${r.result}">`);e.target.value=""};r.readAsDataURL(f)};
+    if($("lineWebhookUrl"))$("lineWebhookUrl").value=state.lineWebhook||"";$("saveLineWebhook").onclick=()=>{state.lineWebhook=$("lineWebhookUrl").value.trim();save();toast("บันทึกลิงก์ LINE แล้ว")};$("testLineWebhook").onclick=()=>{let url=($("lineWebhookUrl").value||state.lineWebhook||"").trim();if(!url){toast("กรุณาวางลิงก์ LINE webhook ก่อน");return}window.open(url+(url.includes("?")?"&":"?")+"test=1","_blank")};$("sendLineSummary").onclick=()=>{sendLine(lineSummaryPayload()).then(ok=>toast(ok?"ส่งภาพรวมงานเข้า LINE แล้ว":"ส่ง LINE ไม่สำเร็จ ตรวจสอบ webhook"))};$("exportBtn").onclick=()=>{let blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="secretary-backup.json";a.click()};$("importInput").onchange=async e=>{let f=e.target.files[0];if(!f)return;try{state=normalizeState({...JSON.parse(await f.text()),user:state.user});save();render();toast("นำเข้าข้อมูลแล้ว")}catch{toast("ไฟล์ไม่ถูกต้อง")}};
+    $("saveGmailEndpoint").onclick=()=>{let account=getGmailAccount();if(!account){toast("กรุณาพิมพ์บัญชี Gmail ก่อน");return}state.gmailEndpoints=state.gmailEndpoints||{};state.gmailEndpoints[account]=$("gmailEndpoint").value.trim();state.gmailAuto=true;save();startGmailAuto();toast("บันทึกลิงก์ Gmail แล้ว และเปิดดึงอัตโนมัติแล้ว")};
+    setInterval(()=>{checkReminders();updateNotificationBadge()},15000); seedEmailSummaries(); $("calendarDate").value=today(); $("diaryDate").value=today(); syncGmailEndpointField(); $("login").classList.remove("hidden"); if(state.user?.local)showApp(); initFirebase(); render(); checkReminders(); updateNotificationBadge(); startGmailAuto();
+  </script>
+</body>
+</html>
